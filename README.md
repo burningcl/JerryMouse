@@ -116,10 +116,12 @@ SQLiteOpenHelper sQLiteOpenHelper = (SQLiteOpenHelper) SQLiteDataSource.init(con
 
 # Insert操作
 + 范例代码<br>
+
 	第一步，DAO接口需要继承接口`Dao<Meta>`
 ```Java
 public interface NoteDao extends Dao<Note> 
 ```
+
 	第二步，调用接口
 ```Java
 Note note = new Note();
@@ -137,5 +139,5 @@ long id = DaoProxy.getDao(NoteDao.class).add(note);
 	long add(Meta... meta);
 	```
 	* 在只需要申明interface，并在method加上`@Sql(type = SqlType.INSERT)`注解就可以实现对Meta的插入（JerryMouse自动将Meta对象map成记录，将插入数据库中）。
-	* 接口调用，采用Java动态代理技术实现。
+	* 接口调用，采用[Java动态代理技术](http://www.ibm.com/developerworks/library/j-jtp08305/ "")实现。
 	* insert成功后，返回该记录的id。
