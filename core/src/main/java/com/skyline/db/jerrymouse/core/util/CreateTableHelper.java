@@ -56,10 +56,10 @@ public class CreateTableHelper {
 			if (dbField == null) {
 				continue;
 			}
-			appendColumnDef(sb, field, dbField);
-			if (i < fields.length - 1) {
+			if (i > 0) {
 				sb.append(",");
 			}
+			appendColumnDef(sb, field, dbField);
 
 			//genCreateIndexSql
 			addCreateIndexSql(tableName, dbField, field, sql);

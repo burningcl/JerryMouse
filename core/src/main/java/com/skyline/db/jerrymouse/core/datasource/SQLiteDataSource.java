@@ -88,7 +88,7 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 		if (INIT_CALL_BACK != null) {
 			INIT_CALL_BACK.beforeCreateTable();
 		}
-		createTables();
+		createTables(db);
 		if (INIT_CALL_BACK != null) {
 			INIT_CALL_BACK.afterCreateTable(db, INSTANCE);
 		}
@@ -102,15 +102,15 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 		}
 	}
 
-	private void createTables() {
+	private void createTables(SQLiteDatabase db) {
 		for (Class<?> clazz : META_CALZZES) {
 			CreateTableSql sql = CreateTableHelper.genCreateTableSql(clazz);
 			Log.i(LOG_TAG, "create table, sql: " + sql.sql);
-			execSQL(sql.sql);
+			db.execSQL(sql.sql);
 			if (sql.createIndexSql != null) {
 				for (String createIndexSql : sql.createIndexSql) {
 					Log.i(LOG_TAG, "create index, sql: " + createIndexSql);
-					execSQL(createIndexSql);
+					db.execSQL(createIndexSql);
 				}
 			}
 		}
