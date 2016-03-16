@@ -17,7 +17,7 @@ JerryMouse一个完整的OrMapping(Ojbect-Relation Mapping)与DAO(Data Access Ob
 2. 有一本动画片，叫Tom and Jerry。Tom是那只Cat，Jerry是那只Mouse。<br>
 因此，脑洞大开，叫JerryMouse。<br>
 
-# 表结构(Schema)与类结构(Class)的声明
+# 表结构(Schema)与类结构(Class)的定义
 + 范例代码
 ```java
 @DbTable(name = Note.TABLE_NAME)
@@ -67,10 +67,10 @@ public class Note {
 		| ------------- | ------------- | ------------- | ------------- | ------------- |
 		|	name 				| String        | 否            | -            		| 列名，当为空时，取Field的名字作为列名						|
 		|	defaultValue  		| String        | 否            | -             		| 默认值													|
-		|	index 				| `SortType`  	| 否            | `SortType.NULL`	| 是否需要创建索引，取值`SortType.ASC`、`SortType.DESC`		|
+		|	index 			| `SortType`  	| 否            | `SortType.NULL`	| 是否需要创建索引，取值`SortType.ASC`、`SortType.DESC`		|
 		|	unique       		| boolean       | 否            | false         		| 是否需要创建唯一索引										|
 		|	notNull      		| boolean       | 否            | false          		| 是否允许为空											|
-		|	mapper     			| `Class<? extends ITypeMapper>`| 否 | `MapperNull.Class` | 如果设置mapper，则允许该Field与Column的类型不一致，需要mapper来进行转换 |
+		|	mapper     		| `Class<? extends ITypeMapper>`| 否 | `MapperNull.Class` | 如果设置mapper，则允许该Field与Column的类型不一致，需要mapper来进行转换 |
 		|	primaryKey          | `@PrimaryKey` | 否            | `@PrimaryKey(primaryKey = false, autoIncrement = false)` | 是否为主键 |
 + @PrimaryKey注解
 	* 功能<br>
@@ -79,5 +79,63 @@ public class Note {
 
 		| 参数 | 类型 | 是否必须 | 默认值 | 含义 |
 		| ------------- | ------------- | ------------- | ------------- | ------------- |
-		|	primaryKey 			| boolean       | 否            | false           	| 是否为主键						|
-		|	autoIncrement  		| boolean       | 否            | false           	| 是否自增						|
+		|	primaryKey 		| boolean       | 否            | false           	| 是否为主键		|
+		|	autoIncrement  		| boolean       | 否            | false           	| 是否自增		|
+
+# 数据库连接初始化
++ 范例代码
+```Java
+String dbName = "TestDatabase";
+SQLiteDatabase.CursorFactory factory = null;
+int version = 1;
+DatabaseErrorHandler errorHandler = null;
+List<Class<?>> metaCalzzes = new ArrayList<>();
+metaCalzzes.add(Note.class);
+DataSourceInitCallBack initCallBack = new DataSourceInitCallBack() {
+	@Override
+	public void beforeCreateTable() {
+		Log.i(LOG_TAG, "beforeCreateTable");
+	}
+	@Override
+	public void afterCreateTable(SQLiteDatabase database, SQLiteDataSource dataSource) {
+		Log.i(LOG_TAG, "afterCreateTable");
+	}
+	@Override
+	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion, SQLiteDataSource dataSource) {
+		Log.i(LOG_TAG, "onUpgrade, oldVersion: " + oldVersion + ", newVersion: " + newVersion);
+	}
+};
+
+SQLiteOpenHelper sQLiteOpenHelper = (SQLiteOpenHelper) SQLiteDataSource.init(context, dbName, factory, version,	errorHandler, metaCalzzes, initCallBack);
+```
++ 范例代码说明
+	* 在以上代码中，我们建立了一个SQLite的连接；
+	* 数据库名字为TestDatabase；
+	* 数据库版本为1；
+	* 在初始化数据库或者升级数据库时，系统会自动创建metaCalzzes列表中的类所对应的表；
+
+# Insert操作
++ 范例代码<br>
+	第一步，DAO接口需要继承接口`Dao<Meta>`
+```Java
+public interface NoteDao extends Dao<Note> 
+```
+	第二步，调用接口
+```Java
+Note note = new Note();
+note.title = "title " + System.currentTimeMillis();
+note.text = "text " + System.currentTimeMillis();
+note.deleted = false;
+note.createTime = System.currentTimeMillis();
+note.modifyTime = System.currentTimeMillis();
+long id = DaoProxy.getDao(NoteDao.class).add(note);
+```
++ 范例代码说明
+	* 在接口`Dao<Meta>`中已经定义了`add(Meta)`方法（Meta为泛型）
+	```Java
+	@Sql(type = SqlType.INSERT)
+	long add(Meta... meta);
+	```
+	* 在只需要申明interface，并在method加上`@Sql(type = SqlType.INSERT)`注解就可以实现对Meta的插入（JerryMouse自动将Meta对象map成记录，将插入数据库中）。
+	* 接口调用，采用Java动态代理技术实现。
+	* insert成功后，返回该记录的id。
