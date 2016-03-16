@@ -69,7 +69,7 @@ public class Note {
 		|	defaultValue  		| String        | 否            | -             		| 默认值													|
 		|	index 				| `SortType`  	| 否            | `SortType.NULL`	| 是否需要创建索引，取值`SortType.ASC`、`SortType.DESC`		|
 		|	unique       		| boolean       | 否            | false         		| 是否需要创建唯一索引										|
-		|	notNull      		| boolean       | 否            | true          		| 是否允许为空											|
+		|	notNull      		| boolean       | 否            | false          		| 是否允许为空											|
 		|	mapper     			| `Class<? extends ITypeMapper>`| 否 | `MapperNull.Class` | 如果设置mapper，则允许该Field与Column的类型不一致，需要mapper来进行转换 |
 		|	primaryKey          | `@PrimaryKey` | 否            | `@PrimaryKey(primaryKey = false, autoIncrement = false)` | 是否为主键 |
 + @PrimaryKey注解
