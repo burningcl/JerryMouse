@@ -50,15 +50,17 @@ public class CreateTableHelper {
 		StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
 		sb.append(tableName);
 		sb.append(" (");
+		boolean foundDbField = false;
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 			DbField dbField = field.getAnnotation(DbField.class);
 			if (dbField == null) {
 				continue;
 			}
-			if (i > 0) {
+			if (foundDbField) {
 				sb.append(",");
 			}
+			foundDbField = true;
 			appendColumnDef(sb, field, dbField);
 
 			//genCreateIndexSql
