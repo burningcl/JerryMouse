@@ -41,7 +41,8 @@ public class UpdateMethodProxy extends AbsMethodProxy {
 	}
 
 	@Override
-	public synchronized void parseClassAnnotations() {
+	public synchronized void parseClassAnnotations() throws ClassParseException {
+		super.parseClassAnnotations();
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class UpdateMethodProxy extends AbsMethodProxy {
 			return genResult(updateItemNum);
 		}
 
-		if (updateSql == null || StringUtils.isEmpty(updateSql.tableName())) {
+		if (isMeta(args)) {
 			updateItemNum = updateItems(args);
 		} else {
 			updateItemNum = updateWithClause(args);
@@ -126,6 +127,9 @@ public class UpdateMethodProxy extends AbsMethodProxy {
 
 	private int updateWithClause(Object[] args) throws IllegalAccessException, InstantiationException, DataSourceException {
 		String tableName = updateSql.tableName();
+		if (StringUtils.isEmpty(tableName)) {
+			tableName = UpdateMethodProxy.this.tableName;
+		}
 		ContentValues values = MethodInvokeHelper.getValueArgs(args, method);
 		String whereClause = updateSql.whereClause();
 		String[] whereArgs = MethodInvokeHelper.getWhereArgs(args, method);

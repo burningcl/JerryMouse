@@ -29,7 +29,8 @@ public class InsertMethodProxy extends AbsMethodProxy {
 	}
 
 	@Override
-	public void parseClassAnnotations() {
+	public void parseClassAnnotations() throws ClassParseException {
+		super.parseClassAnnotations();
 	}
 
 	@Override

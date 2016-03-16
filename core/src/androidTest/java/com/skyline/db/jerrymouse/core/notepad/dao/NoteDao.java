@@ -18,18 +18,18 @@ import java.util.List;
  */
 public interface NoteDao extends Dao<Note> {
 
-	@Sql(type = SqlType.DELETE, delete = @DeleteSql(tableName = Note.TABLE_NAME, whereClause = "createTime=?"))
+	@Sql(type = SqlType.DELETE, delete = @DeleteSql(whereClause = "createTime=?"))
 	int delete(@Param long createTime);
 
-	@Sql(type = SqlType.UPDATE, update = @UpdateSql(tableName = Note.TABLE_NAME, whereClause = "createTime=?"))
+	@Sql(type = SqlType.UPDATE, update = @UpdateSql(whereClause = "createTime=?"))
 	int update(@Value(columnName = "title") String title, @Param long createTime);
 
 	@Sql(type = SqlType.SELECT, select = @SelectSql(sql = "select * from " + Note.TABLE_NAME + " where createTime > ?"))
 	List<Note> select(@Param long createTime);
 
 	@Sql(type = SqlType.SELECT, select = @SelectSql(sql = "select * from " + Note.TABLE_NAME + " where deleted = ?"))
-	List<Note> select(@Param(mapper= BooleanMapper.class) boolean deleted);
+	List<Note> select(@Param(mapper = BooleanMapper.class) boolean deleted);
 
-	@Sql(type = SqlType.SELECT, select = @SelectSql(sql = "select count(1) from " + Note.TABLE_NAME + " where deleted = ?" ))
-	double count(@Param(mapper= BooleanMapper.class) boolean deleted);
+	@Sql(type = SqlType.SELECT, select = @SelectSql(sql = "select count(1) from " + Note.TABLE_NAME + " where deleted = ?"))
+	double count(@Param(mapper = BooleanMapper.class) boolean deleted);
 }

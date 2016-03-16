@@ -1,5 +1,7 @@
 package com.skyline.db.jerrymouse.core.annotation;
 
+import com.skyline.db.jerrymouse.core.util.StringUtils;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,7 +17,7 @@ public @interface UpdateSql {
 	/**
 	 * @return
 	 */
-	String tableName();
+	String tableName() default StringUtils.EMPTY_STR;
 
 	/**
 	 * @return

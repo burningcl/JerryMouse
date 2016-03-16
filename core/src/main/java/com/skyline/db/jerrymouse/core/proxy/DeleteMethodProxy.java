@@ -39,7 +39,8 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 	}
 
 	@Override
-	public void parseClassAnnotations() {
+	public void parseClassAnnotations() throws ClassParseException {
+		super.parseClassAnnotations();
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 			return genResult(delItemNum);
 		}
 
-		if (deleteSql == null || StringUtils.isEmpty(deleteSql.tableName())) {
+		if (isMeta(args)) {
 			delItemNum = deleteItems(args);
 		} else {
 			delItemNum = deleteWithClause(args);
@@ -66,12 +67,12 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 		return genResult(delItemNum);
 	}
 
-	private Object genResult(int result){
+	private Object genResult(int result) {
 		if (returnType == null) {
 			return null;
 		} else if (returnType.equals(Integer.class) || returnType.equals(Integer.TYPE)) {
 			return result;
-		}else {
+		} else {
 			return null;
 		}
 	}
@@ -118,6 +119,9 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 
 	private int deleteWithClause(Object[] args) throws IllegalAccessException, InstantiationException, DataSourceException {
 		String tableName = deleteSql.tableName();
+		if (StringUtils.isEmpty(tableName)) {
+			tableName = DeleteMethodProxy.this.tableName;
+		}
 		String whereClause = deleteSql.whereClause();
 		String[] whereArgs = MethodInvokeHelper.getWhereArgs(args, method);
 		return executeDelete(tableName, whereClause, whereArgs);

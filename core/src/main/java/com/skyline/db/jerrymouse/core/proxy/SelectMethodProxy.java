@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.Dao;
 import com.skyline.db.jerrymouse.core.annotation.SelectSql;
+import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
 import com.skyline.db.jerrymouse.core.executor.IExecutor;
@@ -13,12 +14,10 @@ import com.skyline.db.jerrymouse.core.mapper.DefaultOrMapper;
 import com.skyline.db.jerrymouse.core.mapper.IOrMapper;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.mapper.PrimitiveDataMapper;
-import com.skyline.db.jerrymouse.core.util.GenericTypeHelper;
 import com.skyline.db.jerrymouse.core.util.MethodInvokeHelper;
 import com.skyline.db.jerrymouse.core.util.PrimitiveDataTypeUtil;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,8 +41,6 @@ public class SelectMethodProxy extends AbsMethodProxy {
 
 	private SelectSql sqlAnnotation;
 
-	private Class<?> metaClass;
-
 	public SelectMethodProxy(Class<? extends Dao> clazz, Method method, SelectSql sqlAnnotation) throws MethodParseException {
 		super(clazz, method);
 		if (sqlAnnotation == null && sql == null) {
@@ -53,9 +50,8 @@ public class SelectMethodProxy extends AbsMethodProxy {
 	}
 
 	@Override
-	public void parseClassAnnotations() {
-		Type[] types = GenericTypeHelper.parseGenericType(clazz);
-		metaClass = (Class<?>) types[0];
+	public void parseClassAnnotations() throws ClassParseException {
+		super.parseClassAnnotations();
 	}
 
 	@Override

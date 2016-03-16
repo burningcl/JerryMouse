@@ -60,13 +60,13 @@ public class NoteDaoProxyTest extends AndroidTestCase {
 //	}
 
 
-	@Test
-	public void testDelete1() throws Exception {
-		Note note = addNote();
-		Log.d(LOG_TAG, "testAdd, note: " + note);
-		int deleteItemNum = DaoProxy.getDao(NoteDao.class).delete(note);
-		Log.d(LOG_TAG, "testDelete1, deleteItemNum: " + deleteItemNum);
-	}
+//	@Test
+//	public void testDelete1() throws Exception {
+//		Note note = addNote();
+//		Log.d(LOG_TAG, "testAdd, note: " + note);
+//		int deleteItemNum = DaoProxy.getDao(NoteDao.class).delete(note);
+//		Log.d(LOG_TAG, "testDelete1, deleteItemNum: " + deleteItemNum);
+//	}
 
 //	@Test
 //	public void testDelete2() throws Exception {
@@ -85,13 +85,13 @@ public class NoteDaoProxyTest extends AndroidTestCase {
 //		Log.d(LOG_TAG, "testUpdate1, updateItemNum: " + updateItemNum);
 //	}
 
-//	@Test
-//	public void testUpdate2() throws Exception {
-//		Note note = addNote();
-//		Log.d(LOG_TAG, "testAdd, note: " + note);
-//		int updateItemNum = DaoProxy.getDao(NoteDao.class).update("new title 1", note.createTime);
-//		Log.d(LOG_TAG, "testUpdate2, updateItemNum: " + updateItemNum);
-//	}
+	@Test
+	public void testUpdate2() throws Exception {
+		Note note = addNote();
+		Log.d(LOG_TAG, "testAdd, note: " + note);
+		int updateItemNum = DaoProxy.getDao(NoteDao.class).update("new title 1", note.createTime);
+		Log.d(LOG_TAG, "testUpdate2, updateItemNum: " + updateItemNum);
+	}
 
 
 //	@Test
