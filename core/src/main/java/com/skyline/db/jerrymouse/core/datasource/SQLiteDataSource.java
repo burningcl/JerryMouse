@@ -97,6 +97,7 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.i(LOG_TAG, "onUpgrade, oldVersion: " + oldVersion + ", newVersion: " + newVersion);
+		createTables(db);
 		if (INIT_CALL_BACK != null) {
 			INIT_CALL_BACK.onUpgrade(db, oldVersion, newVersion, INSTANCE);
 		}

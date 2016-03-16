@@ -28,7 +28,7 @@ public class ProxyTestHelper {
 		}
 		String dbName = "TestDatabase";
 		SQLiteDatabase.CursorFactory factory = null;
-		int version = 1;
+		int version = 2;
 		DatabaseErrorHandler errorHandler = null;
 		List<Class<?>> metaCalzzes = new ArrayList<>();
 		metaCalzzes.add(Note.class);
