@@ -142,7 +142,7 @@ long id = DaoProxy.getDao(NoteDao.class).add(note);
 
 # Delete操作(Delete Item)
 + 范例代码<br>
-	第一步，DAO接口需要继承接口`Dao<Meta>`
+	第一步，DAO接口需要继承接口`Dao<Meta>`<br>
 	第二步，调用接口
 ```Java
 int deleteItemNum = DaoProxy.getDao(NoteDao.class).delete(note);
