@@ -150,7 +150,7 @@ long id = DaoProxy.getDao(NoteDao.class).add(note);
 	* 在接口`Dao<Meta>`中已经定义了`add(Meta)`方法（Meta为泛型）
 	```Java
 	@Sql(type = SqlType.INSERT)
-	long add(Meta... meta);
+	long add(Meta meta);
 	```
 	* 在只需要申明interface，并在method加上`@Sql(type = SqlType.INSERT)`注解就可以实现对Meta的插入（JerryMouse自动将Meta对象map成记录，将插入数据库中）。
 	* 接口调用，采用[Java动态代理技术](http://www.ibm.com/developerworks/library/j-jtp08305/ "")实现。
