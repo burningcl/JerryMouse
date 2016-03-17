@@ -130,7 +130,7 @@ SQLiteOpenHelper sQLiteOpenHelper = (SQLiteOpenHelper) SQLiteDataSource.init(con
   
 # Insert操作
   
-+ 范例代码
++ 范例代码  
 第一步，DAO接口需要继承接口`Dao<Meta>`
 ```Java
 public interface NoteDao extends Dao<Note> 
@@ -158,7 +158,7 @@ long id = DaoProxy.getDao(NoteDao.class).add(note);
 
 # Delete操作(Delete Item)
   
-+ 范例代码
++ 范例代码  
 第一步，DAO接口需要继承接口`Dao<Meta>`  
 第二步，调用接口
 ```Java
@@ -178,8 +178,7 @@ int deleteItemNum = DaoProxy.getDao(NoteDao.class).delete(note);
 # Delete操作(Delete with whereCaluse)
 上一章节中的Delete操作有很强的局限性，在更多的应用场景中，我们更需要根据条件删除。因此JerryMouse也提供whereCaluse删除的接口。
   
-+ 范例代码
-  
++ 范例代码  
 第一步，定义接口
 ```Java
 @Sql(type = SqlType.DELETE, delete = @DeleteSql(whereClause = "createTime=?"))
@@ -226,7 +225,7 @@ int updateItemNum = DaoProxy.getDao(NoteDao.class).update(note);
   
 # Update操作(Update with whereCaluse)
 
-+ 范例代码
++ 范例代码  
 第一步，定义接口
 ```Java
 @Sql(type = SqlType.UPDATE, update = @UpdateSql(whereClause = "createTime=?"))
