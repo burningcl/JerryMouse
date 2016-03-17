@@ -116,12 +116,10 @@ SQLiteOpenHelper sQLiteOpenHelper = (SQLiteOpenHelper) SQLiteDataSource.init(con
 
 # Insert操作
 + 范例代码<br>
-
 	第一步，DAO接口需要继承接口`Dao<Meta>`
 ```Java
 public interface NoteDao extends Dao<Note> 
 ```
-
 	第二步，调用接口
 ```Java
 Note note = new Note();
@@ -141,3 +139,45 @@ long id = DaoProxy.getDao(NoteDao.class).add(note);
 	* 在只需要申明interface，并在method加上`@Sql(type = SqlType.INSERT)`注解就可以实现对Meta的插入（JerryMouse自动将Meta对象map成记录，将插入数据库中）。
 	* 接口调用，采用[Java动态代理技术](http://www.ibm.com/developerworks/library/j-jtp08305/ "")实现。
 	* insert成功后，返回该记录的id。
+
+# Delete操作(Delete Item)
++ 范例代码<br>
+	第一步，DAO接口需要继承接口`Dao<Meta>`
+	第二步，调用接口
+```Java
+int deleteItemNum = DaoProxy.getDao(NoteDao.class).delete(note);
+```
++ 范例代码说明
+	* 在接口`Dao<Meta>`中已经定义了`delete(Meta)`方法（Meta为泛型）
+	```Java
+	@Sql(type = SqlType.DELETE)
+	long delete(Meta... meta);
+	```	
+	* 在只需要申明interface，并在method加上`@Sql(type = SqlType.DELETE)`注解就可以实现对Meta的删除（JerryMouse自动解析Meta对象，提取主键及其值，转为whereCaluse，将从数据库将相应的记录删除中）。
+	* delete成功后，返回删除的记录数。
+
+# Delete操作(Delete with whereCaluse)
+上一章节中的Delete操作有很强的局限性，在更多的应用场景中，我们更需要根据条件删除。因此JerryMouse也提供whereCaluse删除的接口。
++ 范例代码<br>
+	第一步，定义接口
+```Java
+@Sql(type = SqlType.DELETE, delete = @DeleteSql(whereClause = "createTime=?"))
+int delete(@Param long createTime);
+```
+	第二步，调用接口
+```Java
+int deleItemNum = DaoProxy.getDao(NoteDao.class).delete(note.createTime);
+```
++ `@DeleteSql`注解
+	* 功能<br>
+		用于描述删除条件
+	* 参数列表<br>
+	
+		| 参数 | 类型 | 是否必须 | 默认值 | 含义 |
+		| ------------- | ------------- | ------------- | ------------- | ------------- |
+		|	tableName 		| String       	| 否            | ""           	| 所需删除的数据所在的表	|
+		|	whereClause  		| String       	| 是            |            	| 删除条件			|
++ 范例代码说明
+	* `@DeleteSql`注解用于描述删除条件。
+	* 当`@DeleteSql`的tableName没有设置时，使用`Note<Meta>`中泛型的Meta中的所描述的tableName。
+	* delete成功后，返回删除的记录数。
