@@ -14,9 +14,9 @@ public interface Dao<Meta> {
 	long add(Meta meta);
 
 	@Sql(type = SqlType.DELETE)
-	int delete(Meta meta);
+	int delete(Meta... meta);
 
 	@Sql(type = SqlType.UPDATE)
-	int update(Meta meta);
+	int update(Meta... meta);
 
 }
