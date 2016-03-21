@@ -199,6 +199,17 @@ int deleItemNum = DaoProxy.getDao(NoteDao.class).delete(note.createTime);
 		| ------------- | ------------- | ------------- | ------------- | ------------- |
 		|	tableName 		| String       	| 否            | ""           	| 所需删除的数据所在的表	|
 		|	whereClause  		| String       	| 是            |            	| 删除条件			|
+
++ `@Param`注解
+  
+	* 功能  
+		用于描述描述所需要的参数
+	* 参数列表  
+	
+		| 参数 | 类型 | 是否必须 | 默认值 | 含义 |
+		| ------------- | ------------- | ------------- | ------------- | ------------- |
+		|	mapper     		| `Class<? extends ITypeMapper>`| 否 | `MapperNull.Class` | 如果设置mapper，则允许该Field与Column的类型不一致，需要mapper来进行转换 |
+
 + 范例代码说明
 	* `@DeleteSql`注解用于描述删除条件。
 	* 当`@DeleteSql`的tableName没有设置时，使用`Note<Meta>`中泛型的Meta中的所描述的tableName。
@@ -249,3 +260,77 @@ int updateItemNum = DaoProxy.getDao(NoteDao.class).update("new title 1", note.cr
 	* `@UpdateSql`注解用于描述修改条件。
 	* 当`@UpdateSql`的tableName没有设置时，使用`Note<Meta>`中泛型的Meta中的所描述的tableName。
 	* 修改成功后，返回修改的记录数。
+
+# Select操作(Select Item)
+
++ 范例代码  
+第一步，DAO接口需要继承接口`Dao<Meta>`  
+第二步，定义查询SQL语句  
+```Java
+@Sql(type = SqlType.SELECT, select = @SelectSql(sql = "select * from " + Note.TABLE_NAME + " where deleted = ?"))
+Note selectItem(@Param(mapper = BooleanMapper.class) boolean deleted);
+```
+第二步，调用接口  
+```Java
+Note note = DaoProxy.getDao(NoteDao.class).selectItem(false);
+```
+
++ `@SelectSql`注解
+	* 功能  
+		用于描述查询SQL
+	* 参数列表  
+	
+		| 参数 | 类型 | 是否必须 | 默认值 | 含义 |
+		| ------------- | ------------- | ------------- | ------------- | ------------- |
+		|	sql 		| String       	| 是            |            	| 查询SQ语句			|
+		|	mapper  	| `@Mapper`     | 否            |            	| OrMapping所需要的mapper。 	|
+
++ `@Mapper`注解
+	* 功能  
+		OrMapping所需要的mapper，将Relation mapping成 Object。	
+	* 参数列表  
+	
+		| 参数 | 类型 | 是否必须 | 默认值 | 含义 |
+		| ------------- | ------------- | ------------- | ------------- | ------------- |
+		|	raw 		| boolean      	| 否            | false     	| 是否是原始查询，如果是，则直接返回Cursor，不进行OrMapping			|
+		|	mapper  	| `Class<? extends IOrMapper>`     | 否            | `MapperNull.class`     | Mapper的class	|
+
++ 范例代码说明
+	* 在未指定mapper的情况下：
+		1. 返回类型为Item， 则Select操作的OrMapping使用DefaultOrMapper；
+		2. 返回类型为List，则Select操作的OrMapping使用DefaultOrListMapper；
+		3. 返回类型为原始数据类型(Primitive Data Type)，则Select操作的OrMapping使用PrimitiveDataMapper；
+  
+# Select操作(Select List)
+
++ 范例代码  
+第一步，DAO接口需要继承接口`Dao<Meta>`  
+第二步，定义查询SQL语句  
+```Java
+@Sql(type = SqlType.SELECT, select = @SelectSql(sql = "select * from " + Note.TABLE_NAME + " where deleted = ?"))
+List<Note> select(@Param(mapper = BooleanMapper.class) boolean deleted);
+```
+第二步，调用接口  
+```Java
+List<Note> notes = DaoProxy.getDao(NoteDao.class).select(false);
+```
+
++ 范例代码说明
+	* 与《Select操作(Select Item)》唯一不同的是，接口的返回值类型不再是Item而是List；
+
+# Select操作(Count、Sum、Max、Min...)
+
++ 范例代码  
+第一步，DAO接口需要继承接口`Dao<Meta>`  
+第二步，定义查询SQL语句  
+```Java
+@Sql(type = SqlType.SELECT, select = @SelectSql(sql = "select count(1) from " + Note.TABLE_NAME + " where deleted = ?"))
+int count(@Param(mapper = BooleanMapper.class) boolean deleted);
+```
+第二步，调用接口  
+```Java
+int cnt = DaoProxy.getDao(NoteDao.class).count(false);
+```
+
++ 范例代码说明
+	* 与《Select操作(Select Item)》唯一不同的是，接口的返回值类型不再是Item，而是基础数据类型或者其包装类型；
