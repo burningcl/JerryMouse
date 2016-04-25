@@ -1,6 +1,6 @@
 package com.skyline.db.jerrymouse.core.annotation;
 
-import com.skyline.db.jerrymouse.core.mapper.IOrMapper;
+import com.skyline.db.jerrymouse.core.mapper.ormapper.IOrMapper;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 
 import java.lang.annotation.ElementType;

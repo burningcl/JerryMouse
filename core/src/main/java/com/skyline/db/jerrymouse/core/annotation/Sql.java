@@ -1,6 +1,6 @@
 package com.skyline.db.jerrymouse.core.annotation;
 
-import com.skyline.db.jerrymouse.core.util.StringUtils;
+import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.type.SqlType;
 
 import java.lang.annotation.ElementType;
@@ -20,18 +20,10 @@ public @interface Sql {
 	 */
 	SqlType type();
 
-	/**
-	 * @return
-	 */
-	SelectSql select() default @SelectSql(sql = StringUtils.EMPTY_STR);
+	String value() default "";
 
 	/**
 	 * @return
 	 */
-	UpdateSql update() default @UpdateSql(tableName = StringUtils.EMPTY_STR, whereClause = StringUtils.EMPTY_STR);
-
-	/**
-	 * @return
-	 */
-	DeleteSql delete() default @DeleteSql(tableName = StringUtils.EMPTY_STR, whereClause = StringUtils.EMPTY_STR);
+	Mapper mapper() default @Mapper(raw = false, mapper = MapperNull.class);
 }

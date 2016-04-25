@@ -1,4 +1,4 @@
-package com.skyline.db.jerrymouse.core.mapper;
+package com.skyline.db.jerrymouse.core.mapper.typemapper;
 
 /**
  * Created by jairus on 15/12/21.

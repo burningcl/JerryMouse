@@ -3,7 +3,7 @@ package com.skyline.db.jerrymouse.core.util;
 import android.util.Log;
 import android.util.Pair;
 
-import com.skyline.db.jerrymouse.core.notepad.util.BooleanMapper;
+import com.skyline.db.jerrymouse.core.mapper.typemapper.BooleanTypeMapper;
 
 import junit.framework.TestCase;
 
@@ -21,7 +21,7 @@ public class TypeMapperHelperTest extends TestCase {
 	@Test
 	public void test() throws Throwable {
 
-		Pair<Type, Type> pair = TypeMapperHelper.getMapperGenericType(BooleanMapper.class);
+		Pair<Type, Type> pair = TypeMapperHelper.getMapperGenericType(BooleanTypeMapper.class);
 		if (pair == null) {
 			Log.d(LOG_TAG, "pair is null");
 			return;

@@ -1,4 +1,4 @@
-package com.skyline.db.jerrymouse.core.mapper;
+package com.skyline.db.jerrymouse.core.mapper.ormapper;
 
 import android.database.Cursor;
 

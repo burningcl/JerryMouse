@@ -3,7 +3,7 @@ package com.skyline.db.jerrymouse.core.notepad.meta;
 import com.skyline.db.jerrymouse.core.annotation.DbField;
 import com.skyline.db.jerrymouse.core.annotation.DbTable;
 import com.skyline.db.jerrymouse.core.annotation.PrimaryKey;
-import com.skyline.db.jerrymouse.core.notepad.util.BooleanMapper;
+import com.skyline.db.jerrymouse.core.mapper.typemapper.BooleanTypeMapper;
 import com.skyline.db.jerrymouse.core.type.SortType;
 
 /**
@@ -29,7 +29,7 @@ public class Note {
 	@DbField(name = "content")
 	public String text;
 
-	@DbField(mapper = BooleanMapper.class, defaultValue = "0")
+	@DbField(mapper = BooleanTypeMapper.class, defaultValue = "0")
 	public boolean deleted;
 
 	@DbField(index = SortType.DESC)

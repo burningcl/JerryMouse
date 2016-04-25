@@ -7,4 +7,6 @@ public class DataSourceHolder {
 
 	public static IDataSource DATA_SOURCE;
 
+	public static int LOG_LEVEL;
+
 }

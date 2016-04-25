@@ -26,7 +26,10 @@ public class InstanceParserTest extends TestCase {
 		note.createTime = System.currentTimeMillis();
 		note.modifyTime = System.currentTimeMillis() + 1;
 
-		InstanceParseResult result = InstanceParser.parse(note);
+		Object[] objs=new Object[2];
+		objs[0]=note;
+
+		InstanceParseResult result = InstanceParser.parse(objs[0]);
 		Log.d(LOG_TAG, "tableName: " + result.tableName);
 		for (InstanceParseResult.FieldParseResult r : result.fieldParseResults) {
 			Log.d(LOG_TAG, "primaryKey: " + r.primaryKey

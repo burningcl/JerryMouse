@@ -6,12 +6,16 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.meta.CreateTableSql;
+import com.skyline.db.jerrymouse.core.type.DbColumnType;
 import com.skyline.db.jerrymouse.core.util.CreateTableHelper;
 
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -45,6 +49,24 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 	                                            DatabaseErrorHandler errorHandler,
 	                                            List<Class<?>> metaCalzzes,
 	                                            DataSourceInitCallBack initCallBack) throws DataSourceException {
+		return init(context,
+				name,
+				factory,
+				version,
+				errorHandler,
+				metaCalzzes,
+				initCallBack,
+				Log.DEBUG);
+	}
+
+	public synchronized static IDataSource init(Context context,
+	                                            String name,
+	                                            SQLiteDatabase.CursorFactory factory,
+	                                            int version,
+	                                            DatabaseErrorHandler errorHandler,
+	                                            List<Class<?>> metaCalzzes,
+	                                            DataSourceInitCallBack initCallBack,
+	                                            int logLevel) throws DataSourceException {
 		Log.i(LOG_TAG, "init, context: " + context + ", name: " + name + ", version: " + version);
 		if (INSTANCE != null && DataSourceHolder.DATA_SOURCE != null) {
 			throw new DataSourceException(DataSourceException.Reason.DATA_SOURCE_ALREADY_INITED);
@@ -53,6 +75,7 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 		INIT_CALL_BACK = initCallBack;
 		INSTANCE = new SQLiteDataSource(context, name, factory, version, errorHandler);
 		DataSourceHolder.DATA_SOURCE = INSTANCE;
+		DataSourceHolder.LOG_LEVEL = logLevel;
 		return INSTANCE;
 	}
 
@@ -69,6 +92,53 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 	@Override
 	public long insert(String table, ContentValues values) {
 		return getWritableDatabase().insert(table, null, values);
+	}
+
+	@Override
+	public long insert(SQLiteDatabase db, SQLiteStatement statement, Object[] bindArgs) throws NoSuchMethodException, IllegalAccessException,
+			InstantiationException, InvocationTargetException, SQLException {
+		statement.clearBindings();
+		bindArgs(statement, bindArgs);
+		return statement.executeInsert();
+	}
+
+	private void bindArgs(SQLiteStatement stmt, Object[] args) throws SQLException {
+		if (args == null) {
+			return;
+		}
+		for (int i = 1; i <= args.length; i++) {
+			Object arg = args[i - 1];
+			if (arg == null) {
+				stmt.bindNull(i);
+			} else {
+				Class<?> clazz = arg.getClass();
+				DbColumnType dbColumnType = DbColumnType.get(clazz);
+				if (dbColumnType == null) {
+					stmt.bindNull(i);
+				} else if (dbColumnType == DbColumnType.INTEGER) {
+					stmt.bindLong(i, ((Number) arg).longValue());
+				} else if (dbColumnType == DbColumnType.REAL) {
+					stmt.bindDouble(i, ((Number) arg).doubleValue());
+				} else {
+					stmt.bindString(i, arg.toString());
+				}
+			}
+		}
+	}
+
+	@Override
+	public void beginTransaction() {
+		getWritableDatabase().beginTransaction();
+	}
+
+	@Override
+	public void setTransactionSuccessful() {
+		getWritableDatabase().setTransactionSuccessful();
+	}
+
+	@Override
+	public void endTransaction() {
+		getWritableDatabase().endTransaction();
 	}
 
 	@Override

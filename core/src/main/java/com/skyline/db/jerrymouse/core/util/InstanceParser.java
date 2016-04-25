@@ -1,10 +1,12 @@
 package com.skyline.db.jerrymouse.core.util;
 
+import android.util.Log;
+
 import com.skyline.db.jerrymouse.core.annotation.DbField;
 import com.skyline.db.jerrymouse.core.annotation.DbTable;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
-import com.skyline.db.jerrymouse.core.mapper.ITypeMapper;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
+import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
 import com.skyline.db.jerrymouse.core.meta.InstanceParseResult;
 
 import java.lang.reflect.Field;
@@ -16,8 +18,9 @@ import java.util.List;
  */
 public class InstanceParser {
 
+	private static final String LOG_TAG = InstanceParser.class.getSimpleName();
+
 	/**
-	 *
 	 * @param instance
 	 * @return
 	 * @throws ClassParseException
@@ -38,7 +41,6 @@ public class InstanceParser {
 	}
 
 	/**
-	 *
 	 * @param instance
 	 * @return
 	 * @throws ClassParseException
@@ -51,6 +53,7 @@ public class InstanceParser {
 		Class<?> clazz = instance.getClass();
 		DbTable dbTable = clazz.getAnnotation(DbTable.class);
 		if (dbTable == null) {
+			Log.e(LOG_TAG, "parseTableInfo, fail, can't find DbTable on " + clazz.getName());
 			throw new ClassParseException(ClassParseException.Reason.DB_TABLE_ANNOTATION_REQUIRED);
 		}
 
@@ -59,7 +62,6 @@ public class InstanceParser {
 	}
 
 	/**
-	 *
 	 * @param instance
 	 * @return
 	 * @throws ClassParseException
@@ -87,7 +89,6 @@ public class InstanceParser {
 	}
 
 	/**
-	 *
 	 * @param instance
 	 * @param field
 	 * @return
@@ -104,32 +105,35 @@ public class InstanceParser {
 		if (dbField == null) {
 			return null;
 		}
+		field.setAccessible(true);
 
 		InstanceParseResult.FieldParseResult result = new InstanceParseResult.FieldParseResult();
+		parseFieldInfo(instance, field, dbField, result);
+		return result;
+	}
 
-		//get field name
+	public static void parseFieldInfo(Object instance, Field field, DbField dbField, InstanceParseResult.FieldParseResult result) throws
+			IllegalAccessException, InstantiationException {
+
+		// get field name
 		result.fieldName = field.getName();
 
 		// get column name
-		if (StringUtils.isEmpty(dbField.name())) {
-			result.columnName = field.getName();
-		} else {
-			result.columnName = dbField.name();
+		result.columnName = dbField.name();
+		if (StringUtils.isEmpty(result.columnName)) {
+			result.columnName = result.fieldName;
 		}
 
 		// get field value
 		Object fieldValue = null;
-		boolean isAccessible = field.isAccessible();
-		field.setAccessible(true);
 		fieldValue = field.get(instance);
-		field.setAccessible(isAccessible);
 		result.fieldValue = fieldValue;
 
 		//get column value
 		Object columnValue = fieldValue;
 		if (columnValue != null) {
 			Class<? extends ITypeMapper> mapperClass = dbField.mapper();
-			if (fieldValue != null && mapperClass != null && mapperClass != MapperNull.class) {
+			if (mapperClass != MapperNull.class) {
 				ITypeMapper mapper = TypeMapperHelper.getInstance(mapperClass);
 				if (mapper != null) {
 					columnValue = mapper.mapMetaType(fieldValue);
@@ -139,7 +143,24 @@ public class InstanceParser {
 
 		result.columnValue = columnValue;
 		result.primaryKey = dbField.primaryKey().primaryKey();
-		result.autoIncrement= dbField.primaryKey().autoIncrement();
-		return result;
+		result.autoIncrement = dbField.primaryKey().autoIncrement();
 	}
+
+	public static Object getColumnValue(Object instance, Field field, DbField dbField) throws IllegalAccessException, InstantiationException {
+		Object fieldValue = field.get(instance);
+
+		//get column value
+		Object columnValue = fieldValue;
+		if (columnValue != null) {
+			Class<? extends ITypeMapper> mapperClass = dbField.mapper();
+			if (mapperClass != MapperNull.class) {
+				ITypeMapper mapper = TypeMapperHelper.getInstance(mapperClass);
+				if (mapper != null) {
+					columnValue = mapper.mapMetaType(fieldValue);
+				}
+			}
+		}
+		return columnValue;
+	}
+
 }

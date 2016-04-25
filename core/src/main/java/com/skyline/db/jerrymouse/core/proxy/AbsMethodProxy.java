@@ -1,5 +1,7 @@
 package com.skyline.db.jerrymouse.core.proxy;
 
+import android.database.sqlite.SQLiteStatement;
+
 import com.skyline.db.jerrymouse.core.Dao;
 import com.skyline.db.jerrymouse.core.annotation.DbTable;
 import com.skyline.db.jerrymouse.core.datasource.DataSourceHolder;
@@ -9,10 +11,13 @@ import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
 import com.skyline.db.jerrymouse.core.executor.IExecutor;
 import com.skyline.db.jerrymouse.core.executor.SQLiteExecutor;
+import com.skyline.db.jerrymouse.core.type.DbColumnType;
 import com.skyline.db.jerrymouse.core.util.GenericTypeHelper;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.sql.SQLException;
 
 /**
  * Created by jairus on 15/12/22.
@@ -28,6 +33,10 @@ public abstract class AbsMethodProxy {
 	protected Class<?> metaClass;
 
 	protected String tableName;
+
+	protected boolean clzAnnoParsed = false;
+
+	protected boolean mtdAnnoParsed = false;
 
 	public AbsMethodProxy(Class<? extends Dao> clazz, Method method) {
 		this.clazz = clazz;
@@ -57,21 +66,89 @@ public abstract class AbsMethodProxy {
 		returnType = method.getReturnType();
 	}
 
-	public abstract Object invoke(Object[] args) throws InstantiationException, IllegalAccessException, DataSourceException, ClassParseException;
+	public abstract Object invoke(Object[] args) throws InstantiationException, IllegalAccessException, DataSourceException, ClassParseException, NoSuchMethodException, InvocationTargetException, SQLException;
+
+
+	public enum ArgsType {
+		/**
+		 * single instance
+		 */
+		SINGLE,
+		/**
+		 * instance array
+		 */
+		ARRAY,
+		/**
+		 * other
+		 */
+		OTHER,
+		/**
+		 *
+		 */
+		ILLEGAL
+
+	}
+
+	ArgsType argsType;
 
 	/**
 	 * @param args
 	 * @return
 	 */
-	protected boolean isMeta(Object... args) {
-		if (args == null || args.length <= 0 || metaClass == null) {
-			return false;
+	protected ArgsType getArgsType(Object... args) {
+		if (argsType != null) {
+			return argsType;
 		}
-		for (Object arg : args) {
-			if (!arg.getClass().equals(metaClass)) {
-				return false;
+		argsType = getArgsTypeInternal(args);
+		return argsType;
+	}
+
+	/**
+	 * @param args
+	 * @return
+	 */
+	protected ArgsType getArgsTypeInternal(Object... args) {
+		if (args == null || args.length <= 0 || metaClass == null) {
+			return ArgsType.ILLEGAL;
+		}
+		if (args.length == 1) {
+			Object arg0 = args[0];
+			if (arg0 == null) {
+				return ArgsType.ILLEGAL;
+			} else if (arg0 instanceof Object[]) {
+				Object[] invokeArgs = (Object[]) args[0];
+				for (Object arg : invokeArgs) {
+					if (!arg.getClass().equals(metaClass)) {
+						return ArgsType.ILLEGAL;
+					}
+				}
+				return ArgsType.ARRAY;
+			} else {
+				if (arg0.getClass().equals(metaClass)) {
+					return ArgsType.SINGLE;
+				} else {
+					return ArgsType.OTHER;
+				}
 			}
 		}
-		return true;
+		return ArgsType.OTHER;
+	}
+
+	protected void bindArg(SQLiteStatement stmt, Object arg, int index) throws SQLException {
+		if (arg == null) {
+			stmt.bindNull(index);
+		} else {
+			Class<?> clazz = arg.getClass();
+			DbColumnType dbColumnType = DbColumnType.get(clazz);
+			if (dbColumnType == null) {
+				stmt.bindNull(index);
+			} else if (dbColumnType == DbColumnType.INTEGER) {
+				stmt.bindLong(index, ((Number) arg).longValue());
+			} else if (dbColumnType == DbColumnType.REAL) {
+				stmt.bindDouble(index, ((Number) arg).doubleValue());
+			} else {
+				stmt.bindString(index, arg.toString());
+			}
+		}
 	}
 }

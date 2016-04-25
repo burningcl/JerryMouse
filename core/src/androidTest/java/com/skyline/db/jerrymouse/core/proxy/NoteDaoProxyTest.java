@@ -36,28 +36,28 @@ public class NoteDaoProxyTest extends AndroidTestCase {
 		note.createTime = System.currentTimeMillis();
 		note.modifyTime = System.currentTimeMillis();
 
-		long id = DaoProxy.getDao(NoteDao.class).add(note);
-		note.id = id;
+		long[] id = DaoProxy.getDao(NoteDao.class).insert(note);
+		note.id = id[0];
 		long t2 = System.currentTimeMillis();
 		Log.d(LOG_TAG, "testAdd, cost: " + (t2 - t1));
 		return note;
 	}
 
-//	@Test
-//	public void testAdd() throws Throwable {
-//
-//		long t1 = System.currentTimeMillis();
-//		Note note = new Note();
-//		note.title = "title " + System.currentTimeMillis();
-//		note.text = "text " + System.currentTimeMillis();
-//		note.deleted = false;
-//		note.createTime = System.currentTimeMillis();
-//		note.modifyTime = System.currentTimeMillis();
-//
-//		DaoProxy.getDao(NoteDao.class).add(note);
-//		long t2 = System.currentTimeMillis();
-//		Log.d(LOG_TAG, "testAdd, cost: " + (t2 - t1));
-//	}
+	@Test
+	public void testAdd() throws Throwable {
+
+		long t1 = System.currentTimeMillis();
+		Note note = new Note();
+		note.title = "title " + System.currentTimeMillis();
+		note.text = "text " + System.currentTimeMillis();
+		note.deleted = false;
+		note.createTime = System.currentTimeMillis();
+		note.modifyTime = System.currentTimeMillis();
+
+		DaoProxy.getDao(NoteDao.class).insert(note);
+		long t2 = System.currentTimeMillis();
+		Log.d(LOG_TAG, "testAdd, cost: " + (t2 - t1));
+	}
 
 
 //	@Test
@@ -89,10 +89,18 @@ public class NoteDaoProxyTest extends AndroidTestCase {
 	public void testUpdate2() throws Exception {
 		Note note = addNote();
 		Log.d(LOG_TAG, "testAdd, note: " + note);
-		int updateItemNum = DaoProxy.getDao(NoteDao.class).update("new title 1", note.createTime);
+		int updateItemNum = DaoProxy.getDao(NoteDao.class).update(note);
 		Log.d(LOG_TAG, "testUpdate2, updateItemNum: " + updateItemNum);
 	}
 
+//		@Test
+//	public void testSelect() throws Exception {
+//		for(int i=0;i<10;i++) {
+//			long t1 = System.currentTimeMillis();
+//			Note note = DaoProxy.getDao(NoteDao.class).selectItem(false);
+//				Log.d(LOG_TAG, "testSelect, note: " + note);
+//		}
+//	}
 
 //	@Test
 //	public void testSelect() throws Exception {

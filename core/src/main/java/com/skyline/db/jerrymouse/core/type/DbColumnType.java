@@ -26,8 +26,8 @@ public enum DbColumnType {
 		if (type == null) {
 			Log.w(LOG_TAG, "get, type is null!");
 			return null;
-		} else if (type == Long.class || type == Integer.class || type == Character.class || type == Short.class || type == Byte.class
-				|| type == Long.TYPE || type == Integer.TYPE || type == Character.TYPE || type == Short.TYPE || type == Byte.TYPE) {
+		} else if (type == Integer.TYPE || type == Long.TYPE || type == Character.TYPE || type == Short.TYPE || type == Byte.TYPE
+				|| type == Integer.class || type == Long.class || type == Character.class || type == Short.class || type == Byte.class) {
 			return INTEGER;
 		} else if (type == Double.class || type == Float.class
 				|| type == Double.TYPE || type == Float.TYPE) {

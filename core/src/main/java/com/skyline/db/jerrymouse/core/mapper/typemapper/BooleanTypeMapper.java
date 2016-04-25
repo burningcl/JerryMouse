@@ -1,12 +1,10 @@
-package com.skyline.db.jerrymouse.core.notepad.util;
+package com.skyline.db.jerrymouse.core.mapper.typemapper;
 
-
-import com.skyline.db.jerrymouse.core.mapper.ITypeMapper;
 
 /**
  * Created by apple on 16/1/22.
  */
-public class BooleanMapper implements ITypeMapper<Boolean, Integer> {
+public class BooleanTypeMapper implements ITypeMapper<Boolean, Integer> {
 
 
 	@Override

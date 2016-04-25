@@ -21,10 +21,6 @@ public class MethodParseException extends Exception {
 
 		SELECT_SQL_REQUIRED("the annotation SelectSql is required in annotation SqlMethod!"),
 
-		UPDATE_SQL_REQUIRED("the annotation UpdateSql is required in annotation SqlMethod!"),
-
-		DELETE_SQL_REQUIRED("the annotation DeleteSql is required in annotation SqlMethod!"),
-
 		UNABLE_TO_PARSE_SQL_ANNOTATION("unable to parse sql annotation!"),
 
 		MAPPER_DOES_NOT_MATCH("the mapper in Sql annotation does not match the return type of this method!");

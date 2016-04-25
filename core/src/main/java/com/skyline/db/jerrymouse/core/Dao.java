@@ -11,12 +11,12 @@ import com.skyline.db.jerrymouse.core.type.SqlType;
 public interface Dao<Meta> {
 
 	@Sql(type = SqlType.INSERT)
-	long add(Meta meta);
+	long[] insert(Meta... meta);
 
 	@Sql(type = SqlType.DELETE)
-	int delete(Meta... meta);
+	long delete(Meta... meta);
 
 	@Sql(type = SqlType.UPDATE)
-	int update(Meta... meta);
+	long update(Meta... meta);
 
 }

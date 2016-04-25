@@ -3,6 +3,9 @@ package com.skyline.db.jerrymouse.core.mapper;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.skyline.db.jerrymouse.core.mapper.ormapper.IOrMapper;
+import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
+
 /**
  * Created by jairus on 15/12/22.
  */

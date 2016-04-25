@@ -4,7 +4,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.skyline.db.jerrymouse.core.LRUCache;
-import com.skyline.db.jerrymouse.core.mapper.ITypeMapper;
+import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

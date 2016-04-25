@@ -1,4 +1,4 @@
-package com.skyline.db.jerrymouse.core.mapper;
+package com.skyline.db.jerrymouse.core.mapper.ormapper;
 
 import android.database.Cursor;
 import android.util.Log;
@@ -16,8 +16,8 @@ public abstract class AbsOrMapper<T> implements IOrMapper<T> {
 	private static final String LOG_TAG = AbsOrMapper.class.getSimpleName();
 
 	protected Object getFieldValue(Cursor cursor, int columnIndex, Type type) {
-		if (cursor == null || type == null) {
-			Log.w(LOG_TAG, "getFieldValue, fail, cursor, columnName or type is null");
+		if (cursor == null || type == null || columnIndex < 0) {
+			Log.w(LOG_TAG, "getFieldValue, fail, cursor, columnName or type is null, or columnIndex is " + columnIndex);
 			return null;
 		}
 		if (type.equals(Long.TYPE) || type.equals(Long.class)) {

@@ -67,7 +67,7 @@ public class DaoProxy implements InvocationHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized static <D extends Dao> D getDao(Class<D> clazz) throws Exception{
+	public synchronized static <D extends Dao> D getDao(Class<D> clazz) throws Exception {
 		if (clazz == null) {
 			throw new DataSourceException(DataSourceException.Reason.DAO_CLASS_REQUIRED);
 		}
@@ -126,13 +126,13 @@ public class DaoProxy implements InvocationHandler {
 		}
 
 		if (sqlType.equals(SqlType.SELECT)) {
-			methodProxy = new SelectMethodProxy(clazz, method, sql.select());
+			methodProxy = new SelectMethodProxy(clazz, method, sql.value(), sql.mapper());
 		} else if (sqlType.equals(SqlType.INSERT)) {
 			methodProxy = new InsertMethodProxy(clazz, method);
 		} else if (sqlType.equals(SqlType.UPDATE)) {
-			methodProxy = new UpdateMethodProxy(clazz, method, sql.update());
+			methodProxy = new UpdateMethodProxy(clazz, method, sql.value());
 		} else if (sqlType.equals(SqlType.DELETE)) {
-			methodProxy = new DeleteMethodProxy(clazz, method, sql.delete());
+			methodProxy = new DeleteMethodProxy(clazz, method, sql.value());
 		}
 
 		if (methodProxy != null)

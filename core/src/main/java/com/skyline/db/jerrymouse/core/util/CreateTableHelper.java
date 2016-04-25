@@ -6,7 +6,7 @@ import android.util.Pair;
 import com.skyline.db.jerrymouse.core.annotation.DbField;
 import com.skyline.db.jerrymouse.core.annotation.DbTable;
 import com.skyline.db.jerrymouse.core.annotation.PrimaryKey;
-import com.skyline.db.jerrymouse.core.mapper.ITypeMapper;
+import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.meta.CreateTableSql;
 import com.skyline.db.jerrymouse.core.type.DbColumnType;
@@ -31,18 +31,22 @@ public class CreateTableHelper {
 	public static CreateTableSql genCreateTableSql(Class<?> clazz) {
 		if (clazz == null) {
 			Log.w(LOG_TAG, "createTable, fail, clazz is null!");
+			return null;
 		}
 		DbTable dbTable = clazz.getAnnotation(DbTable.class);
 		if (dbTable == null) {
 			Log.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", could not found DbTable annotation!");
+			return null;
 		}
 		String tableName = dbTable.name();
 		if (tableName == null || tableName.length() <= 0) {
 			Log.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", could not found tableName!");
+			return null;
 		}
 		Field[] fields = clazz.getDeclaredFields();
 		if (fields == null || fields.length <= 0) {
 			Log.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", fields is null!");
+			return null;
 		}
 
 		CreateTableSql sql = new CreateTableSql();
@@ -116,11 +120,15 @@ public class CreateTableHelper {
 		if (sb == null || field == null || dbField == null) {
 			return;
 		}
+		DbColumnType columnType = getColumnType(field, dbField);
+		if (columnType == null) {
+			return;
+		}
 		sb.append(BLANK_SPACE);
 		sb.append(getColumnName(field, dbField));
 
 		sb.append(BLANK_SPACE);
-		sb.append(getColumnType(field, dbField));
+		sb.append(columnType);
 
 		PrimaryKey primaryKey = dbField.primaryKey();
 		if (primaryKey != null && primaryKey.primaryKey()) {

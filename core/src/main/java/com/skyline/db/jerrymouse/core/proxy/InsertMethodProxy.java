@@ -1,18 +1,25 @@
 package com.skyline.db.jerrymouse.core.proxy;
 
-import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.Dao;
+import com.skyline.db.jerrymouse.core.annotation.DbField;
+import com.skyline.db.jerrymouse.core.annotation.DbTable;
+import com.skyline.db.jerrymouse.core.datasource.DataSourceHolder;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
-import com.skyline.db.jerrymouse.core.executor.IExecutor;
-import com.skyline.db.jerrymouse.core.meta.InstanceParseResult;
-import com.skyline.db.jerrymouse.core.util.ContentValuesHelper;
 import com.skyline.db.jerrymouse.core.util.InstanceParser;
+import com.skyline.db.jerrymouse.core.util.StringUtils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jairus on 15/12/22.
@@ -24,72 +31,156 @@ public class InsertMethodProxy extends AbsMethodProxy {
 	 */
 	private static final String LOG_TAG = InsertMethodProxy.class.getSimpleName();
 
+	private String tableName;
+
+	private Field[] fields;
+
+	private boolean[] autoIncrements;
+
+	private DbField[] dbFields;
+
+	private String sql;
+
 	public InsertMethodProxy(Class<? extends Dao> clazz, Method method) throws MethodParseException {
 		super(clazz, method);
 	}
 
 	@Override
 	public void parseClassAnnotations() throws ClassParseException {
+		if (clzAnnoParsed) {
+			return;
+		}
 		super.parseClassAnnotations();
+		if (tableName == null) {
+			tableName = metaClass.getAnnotation(DbTable.class).name();
+		}
+		if (fields == null) {
+			fields = metaClass.getDeclaredFields();
+		}
+		if (dbFields == null) {
+			dbFields = new DbField[fields.length];
+			autoIncrements = new boolean[fields.length];
+			for (int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				dbFields[i] = field.getAnnotation(DbField.class);
+				if (dbFields[i] == null) {
+					continue;
+				}
+				field.setAccessible(true);
+				autoIncrements[i] = dbFields[i].primaryKey().autoIncrement();
+			}
+		}
+		clzAnnoParsed = true;
 	}
 
 	@Override
 	public synchronized void parseMethodAnnotations() throws InstantiationException, IllegalAccessException, NoSuchMethodException, MethodParseException {
+		if (mtdAnnoParsed) {
+			return;
+		}
 		super.parseMethodAnnotations();
+		mtdAnnoParsed = true;
 	}
 
 	@Override
-	public Object invoke(Object[] args) throws IllegalAccessException, ClassParseException, InstantiationException, DataSourceException {
+	public Object invoke(Object[] args) throws IllegalAccessException, ClassParseException, InstantiationException, DataSourceException, NoSuchMethodException, InvocationTargetException, SQLException {
 
 		if (args == null || args.length <= 0) {
 			Log.w(LOG_TAG, "invoke, fail, args is empty!");
 			return null;
 		}
 
-		IExecutor executor = getExecutor();
-		long[] ids = new long[args.length];
-		for (int i = 0; i < args.length; i++) {
-			Object arg = args[i];
-			StringBuilder sqlSb = new StringBuilder();
-			StringBuilder paramsSb = new StringBuilder();
-			StringBuilder valuesSb = new StringBuilder();
+		ArgsType argsType = getArgsType(args);
+		Object result = null;
+		if (argsType == ArgsType.ILLEGAL) {
+			result = null;
+		} else if (argsType == ArgsType.ARRAY) {
+			result = invokeInternal((Object[]) args[0]);
+		} else if (argsType == ArgsType.SINGLE) {
+			result = invokeInternal(args);
+		} else {
+			result = null;
+		}
+		return result;
+	}
 
-			InstanceParseResult result = InstanceParser.parse(arg);
-			String table = result.tableName;
+	private String getSql() {
 
-			sqlSb.append("INSERT INTO ")
-					.append(table);
+		if (this.sql != null) {
+			return this.sql;
+		}
 
-			ContentValues values = new ContentValues();
-			for (int j = 0; j < result.fieldParseResults.size(); j++) {
-				InstanceParseResult.FieldParseResult r = result.fieldParseResults.get(j);
-				if (r.autoIncrement) {
-					continue;
-				}
-				ContentValuesHelper.put(r.columnName, r.columnValue, values);
-				if (j == 0) {
-					paramsSb.append("(");
-					valuesSb.append("(");
-				}
-				paramsSb.append(r.columnName);
-				valuesSb.append(r.columnValue);
-				if (j < result.fieldParseResults.size() - 1) {
-					paramsSb.append(", ");
-					valuesSb.append(", ");
-				} else {
-					paramsSb.append(")");
-					valuesSb.append(")");
-				}
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT");
+		//sql.append(" OR REPLACE ");
+		sql.append(" INTO ");
+		sql.append(tableName);
+		sql.append('(');
+
+		List<String> columnNames = new ArrayList<>();
+		for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			DbField dbField = dbFields[i];
+			if (field == null || dbField == null || autoIncrements[i]) {
+				continue;
 			}
+			// get column name
+			String columnName = dbField.name();
+			if (StringUtils.isEmpty(columnName)) {
+				columnName = field.getName();
+			}
+			columnNames.add(columnName);
+		}
 
-			sqlSb.append(paramsSb);
-			sqlSb.append(" VALUES ");
-			sqlSb.append(valuesSb);
-			sqlSb.append(";");
+		int size = (columnNames != null && columnNames.size() > 0)
+				? columnNames.size() : 0;
+		if (size > 0) {
+			for (int i = 0; i < size; i++) {
+				String colName = columnNames.get(i);
+				sql.append((i > 0) ? "," : "");
+				sql.append(colName);
+			}
+			sql.append(')');
+			sql.append(" VALUES (");
+			for (int i = 0; i < size; i++) {
+				sql.append((i > 0) ? ",?" : "?");
+			}
+		} else {
+			sql.append(") VALUES (NULL");
+		}
+		sql.append(')');
 
-			ids[i] = executor.executeInsert(table, values);
+		this.sql = sql.toString();
 
-			Log.i(LOG_TAG, "invoke, sql: " + sqlSb);
+		Log.d(LOG_TAG, "getSql, sql: " + sql);
+
+		return this.sql;
+	}
+
+	public Object invokeInternal(Object[] args) throws IllegalAccessException, ClassParseException, InstantiationException, DataSourceException, NoSuchMethodException, InvocationTargetException, SQLException {
+
+		long[] ids = new long[args.length];
+		SQLiteDatabase db = DataSourceHolder.DATA_SOURCE.getWritableDatabase();
+		int cursor;
+		//使用SQLiteStatement会比使用ContentValues快近40%
+		SQLiteStatement statement = db.compileStatement(getSql());
+		try {
+			for (int i = 0; i < args.length; i++) {
+				Object arg = args[i];
+				cursor = 0;
+				statement.clearBindings();
+				for (int j = 0; j < fields.length; j++) {
+					DbField dbField = dbFields[j];
+					if (dbField == null || autoIncrements[j]) {
+						continue;
+					}
+					Object columnValue = InstanceParser.getColumnValue(arg, fields[j], dbField);
+					bindArg(statement, columnValue, ++cursor);
+				}
+				ids[i] = statement.executeInsert();
+			}
+		} finally {
+			statement.close();
 		}
 
 		if (returnType == null) {

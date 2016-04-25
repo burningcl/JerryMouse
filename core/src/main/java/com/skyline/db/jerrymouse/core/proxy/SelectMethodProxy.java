@@ -4,18 +4,19 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.Dao;
-import com.skyline.db.jerrymouse.core.annotation.SelectSql;
+import com.skyline.db.jerrymouse.core.annotation.Mapper;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
 import com.skyline.db.jerrymouse.core.executor.IExecutor;
-import com.skyline.db.jerrymouse.core.mapper.DefaultOrListMapper;
-import com.skyline.db.jerrymouse.core.mapper.DefaultOrMapper;
-import com.skyline.db.jerrymouse.core.mapper.IOrMapper;
+import com.skyline.db.jerrymouse.core.mapper.ormapper.DefaultOrListMapper;
+import com.skyline.db.jerrymouse.core.mapper.ormapper.DefaultOrMapper;
+import com.skyline.db.jerrymouse.core.mapper.ormapper.IOrMapper;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
-import com.skyline.db.jerrymouse.core.mapper.PrimitiveDataMapper;
+import com.skyline.db.jerrymouse.core.mapper.ormapper.PrimitiveDataMapper;
 import com.skyline.db.jerrymouse.core.util.MethodInvokeHelper;
 import com.skyline.db.jerrymouse.core.util.PrimitiveDataTypeUtil;
+import com.skyline.db.jerrymouse.core.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -37,16 +38,17 @@ public class SelectMethodProxy extends AbsMethodProxy {
 
 	private String sql;
 
+	private Mapper mapperAnnotation;
+
 	private boolean methodAnnotationsParsed = false;
 
-	private SelectSql sqlAnnotation;
-
-	public SelectMethodProxy(Class<? extends Dao> clazz, Method method, SelectSql sqlAnnotation) throws MethodParseException {
+	public SelectMethodProxy(Class<? extends Dao> clazz, Method method, String sql, Mapper mapperAnnotation) throws MethodParseException {
 		super(clazz, method);
-		if (sqlAnnotation == null && sql == null) {
+		if (StringUtils.isEmpty(sql)) {
 			throw new MethodParseException(MethodParseException.Reason.SELECT_SQL_REQUIRED);
 		}
-		this.sqlAnnotation = sqlAnnotation;
+		this.sql = sql;
+		this.mapperAnnotation = mapperAnnotation;
 	}
 
 	@Override
@@ -65,11 +67,10 @@ public class SelectMethodProxy extends AbsMethodProxy {
 	}
 
 	private void parseSqlAnnotation() throws IllegalAccessException, InstantiationException, NoSuchMethodException, MethodParseException {
-		sql = sqlAnnotation.sql();
-		raw = sqlAnnotation.mapper().raw();
+		raw = mapperAnnotation.raw();
 		Class<? extends IOrMapper> mapperClass = null;
 		if (!raw) {
-			mapperClass = sqlAnnotation.mapper().mapper();
+			mapperClass = mapperAnnotation.mapper();
 			if (!mapperClass.equals(MapperNull.class)) {
 				returnMapper = mapperClass.newInstance();
 			} else {

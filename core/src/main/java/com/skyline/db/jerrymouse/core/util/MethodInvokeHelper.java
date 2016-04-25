@@ -4,7 +4,7 @@ import android.content.ContentValues;
 
 import com.skyline.db.jerrymouse.core.annotation.Param;
 import com.skyline.db.jerrymouse.core.annotation.Value;
-import com.skyline.db.jerrymouse.core.mapper.ITypeMapper;
+import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 
 import java.lang.annotation.Annotation;

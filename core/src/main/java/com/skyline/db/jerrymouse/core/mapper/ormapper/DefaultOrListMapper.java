@@ -1,9 +1,8 @@
-package com.skyline.db.jerrymouse.core.mapper;
+package com.skyline.db.jerrymouse.core.mapper.ormapper;
 
 import android.database.Cursor;
 import android.util.Log;
-
-import com.skyline.db.jerrymouse.core.LRUCache;
+import android.util.LruCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ public class DefaultOrListMapper<T> implements IOrMapper<List<T>> {
 	 */
 	private static final String LOG_TAG = DefaultOrListMapper.class.getSimpleName();
 
-	public static LRUCache<Class, DefaultOrListMapper> CACHE = new LRUCache<>(32);
+	public static LruCache<Class, DefaultOrListMapper> CACHE = new LruCache<>(32);
 
 	private Class<? extends T> clazz;
 
