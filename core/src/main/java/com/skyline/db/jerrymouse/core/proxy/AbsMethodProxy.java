@@ -1,16 +1,14 @@
 package com.skyline.db.jerrymouse.core.proxy;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import com.skyline.db.jerrymouse.core.Dao;
 import com.skyline.db.jerrymouse.core.annotation.DbTable;
 import com.skyline.db.jerrymouse.core.datasource.DataSourceHolder;
-import com.skyline.db.jerrymouse.core.datasource.SQLiteDataSource;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
-import com.skyline.db.jerrymouse.core.executor.IExecutor;
-import com.skyline.db.jerrymouse.core.executor.SQLiteExecutor;
 import com.skyline.db.jerrymouse.core.type.DbColumnType;
 import com.skyline.db.jerrymouse.core.util.GenericTypeHelper;
 
@@ -43,13 +41,18 @@ public abstract class AbsMethodProxy {
 		this.method = method;
 	}
 
-	protected IExecutor getExecutor() throws DataSourceException {
+	protected SQLiteDatabase getWritableDatabase() throws DataSourceException {
 		if (DataSourceHolder.DATA_SOURCE == null) {
 			throw new DataSourceException(DataSourceException.Reason.DATA_SOURCE_NOT_INITED);
-		} else if (DataSourceHolder.DATA_SOURCE instanceof SQLiteDataSource) {
-			return SQLiteExecutor.geInstance();
 		}
-		throw new DataSourceException(DataSourceException.Reason.DATA_SOURCE_NOT_INITED);
+		return DataSourceHolder.DATA_SOURCE.getWritableDatabase();
+	}
+
+	protected SQLiteDatabase getReadableDatabase() throws DataSourceException {
+		if (DataSourceHolder.DATA_SOURCE == null) {
+			throw new DataSourceException(DataSourceException.Reason.DATA_SOURCE_NOT_INITED);
+		}
+		return DataSourceHolder.DATA_SOURCE.getReadableDatabase();
 	}
 
 	public void parseClassAnnotations() throws ClassParseException {

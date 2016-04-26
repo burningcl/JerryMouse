@@ -8,11 +8,10 @@ import com.skyline.db.jerrymouse.core.annotation.Mapper;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
-import com.skyline.db.jerrymouse.core.executor.IExecutor;
+import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.mapper.ormapper.DefaultOrListMapper;
 import com.skyline.db.jerrymouse.core.mapper.ormapper.DefaultOrMapper;
 import com.skyline.db.jerrymouse.core.mapper.ormapper.IOrMapper;
-import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.mapper.ormapper.PrimitiveDataMapper;
 import com.skyline.db.jerrymouse.core.util.MethodInvokeHelper;
 import com.skyline.db.jerrymouse.core.util.PrimitiveDataTypeUtil;
@@ -96,8 +95,7 @@ public class SelectMethodProxy extends AbsMethodProxy {
 
 		Log.i(LOG_TAG, "invoke, sql: " + sql + ", invokeArgs: " + Arrays.toString(invokeArgs));
 
-		IExecutor executor = getExecutor();
-		Cursor cursor = executor.executeQuery(sql, invokeArgs);
+		Cursor cursor = getReadableDatabase().rawQuery(sql, invokeArgs);
 		long t2 = System.currentTimeMillis();
 
 		if (raw) {

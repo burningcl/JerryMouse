@@ -7,7 +7,6 @@ import android.util.Log;
 import com.skyline.db.jerrymouse.core.Dao;
 import com.skyline.db.jerrymouse.core.annotation.DbField;
 import com.skyline.db.jerrymouse.core.annotation.DbTable;
-import com.skyline.db.jerrymouse.core.datasource.DataSourceHolder;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
@@ -160,7 +159,7 @@ public class InsertMethodProxy extends AbsMethodProxy {
 	public Object invokeInternal(Object[] args) throws IllegalAccessException, ClassParseException, InstantiationException, DataSourceException, NoSuchMethodException, InvocationTargetException, SQLException {
 
 		long[] ids = new long[args.length];
-		SQLiteDatabase db = DataSourceHolder.DATA_SOURCE.getWritableDatabase();
+		SQLiteDatabase db = getWritableDatabase();
 		int cursor;
 		//使用SQLiteStatement会比使用ContentValues快近40%
 		SQLiteStatement statement = db.compileStatement(getSql());

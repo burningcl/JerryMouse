@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.Dao;
 import com.skyline.db.jerrymouse.core.annotation.DbField;
-import com.skyline.db.jerrymouse.core.datasource.DataSourceHolder;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
@@ -113,7 +112,7 @@ public class UpdateMethodProxy extends AbsMethodProxy {
 			sql = getSql();
 		}
 
-		SQLiteDatabase db = DataSourceHolder.DATA_SOURCE.getWritableDatabase();
+		SQLiteDatabase db = getWritableDatabase();
 		SQLiteStatement statement = db.compileStatement(sql);
 		try {
 			List<Object> whereArgList = new ArrayList<>();
@@ -150,7 +149,7 @@ public class UpdateMethodProxy extends AbsMethodProxy {
 	}
 
 	private long updateWithSql(Object[] args) throws IllegalAccessException, InstantiationException, DataSourceException, SQLException {
-		SQLiteDatabase db = DataSourceHolder.DATA_SOURCE.getWritableDatabase();
+		SQLiteDatabase db = getWritableDatabase();
 		SQLiteStatement statement = db.compileStatement(sql);
 		try {
 			statement.clearBindings();

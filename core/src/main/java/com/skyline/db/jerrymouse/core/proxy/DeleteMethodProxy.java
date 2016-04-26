@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.Dao;
 import com.skyline.db.jerrymouse.core.annotation.DbField;
-import com.skyline.db.jerrymouse.core.datasource.DataSourceHolder;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
@@ -111,7 +110,7 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 			sql = getSql();
 		}
 
-		SQLiteDatabase db = DataSourceHolder.DATA_SOURCE.getWritableDatabase();
+		SQLiteDatabase db = getWritableDatabase();
 		SQLiteStatement statement = db.compileStatement(sql);
 		try {
 			for (int i = 0; i < items.length; i++) {
@@ -138,7 +137,7 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 	}
 
 	private long delWithSql(Object[] args) throws IllegalAccessException, InstantiationException, DataSourceException, SQLException {
-		SQLiteDatabase db = DataSourceHolder.DATA_SOURCE.getWritableDatabase();
+		SQLiteDatabase db = getWritableDatabase();
 		SQLiteStatement statement = db.compileStatement(sql);
 		try {
 			statement.clearBindings();
