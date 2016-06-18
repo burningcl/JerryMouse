@@ -26,3 +26,11 @@ dependencies {
     compile 'junit:junit:4.12'
     compile 'com.google.code.gson:gson:2.3.1'
 }
+
+task makeJar(type: Copy) {
+    delete 'build/libs/jerrymouse.jar'
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename ('classes.jar', 'jerrymouse.jar')
+}

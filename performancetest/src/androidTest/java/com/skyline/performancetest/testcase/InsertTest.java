@@ -40,7 +40,6 @@ public class InsertTest extends AndroidTestCase {
 		return notes;
 	}
 
-	@Test
 	public void test() throws Exception {
 
 		OrmLiteNoteDao ormLiteNoteDao = new OrmLiteNoteDao();

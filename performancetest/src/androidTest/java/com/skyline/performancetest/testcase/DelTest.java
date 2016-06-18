@@ -10,8 +10,6 @@ import com.skyline.performancetest.jerrymouse.JerryMouseNoteDao;
 import com.skyline.performancetest.ormlite.OrmLiteDBHelper;
 import com.skyline.performancetest.ormlite.OrmLiteNoteDao;
 
-import org.junit.Test;
-
 /**
  * Created by jairus on 16/4/23.
  */
@@ -41,7 +39,6 @@ public class DelTest extends AndroidTestCase {
 		return notes;
 	}
 
-	@Test
 	public void test() throws Exception {
 		OrmLiteNoteDao ormLiteNoteDao = new OrmLiteNoteDao();
 		for (int i = 0; i < 5; i++) {

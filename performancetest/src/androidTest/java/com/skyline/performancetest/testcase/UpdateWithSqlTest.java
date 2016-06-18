@@ -24,7 +24,6 @@ public class UpdateWithSqlTest extends AndroidTestCase {
 		JerryMouseDbInitHelper.initDb(getContext());
 	}
 
-	@Test
 	public void test() throws Exception {
 
 		OrmLiteNoteDao ormLiteNoteDao = new OrmLiteNoteDao();

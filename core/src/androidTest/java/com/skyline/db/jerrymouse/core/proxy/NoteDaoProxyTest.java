@@ -89,7 +89,7 @@ public class NoteDaoProxyTest extends AndroidTestCase {
 	public void testUpdate2() throws Exception {
 		Note note = addNote();
 		Log.d(LOG_TAG, "testAdd, note: " + note);
-		int updateItemNum = DaoProxy.getDao(NoteDao.class).update(note);
+		long updateItemNum = DaoProxy.getDao(NoteDao.class).update(note);
 		Log.d(LOG_TAG, "testUpdate2, updateItemNum: " + updateItemNum);
 	}
 

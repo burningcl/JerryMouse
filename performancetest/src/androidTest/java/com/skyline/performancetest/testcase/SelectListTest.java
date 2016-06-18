@@ -27,7 +27,6 @@ public class SelectListTest extends AndroidTestCase {
 		JerryMouseDbInitHelper.initDb(getContext());
 	}
 
-	@Test
 	public void test() throws Exception {
 		int n = 500;
 		OrmLiteNoteDao ormLiteNoteDao = new OrmLiteNoteDao();

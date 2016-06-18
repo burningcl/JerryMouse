@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "jerrymouse.db.skyline.com.jerrymouse"
+        applicationId "com.skyline.db.jerrymouse"
         minSdkVersion 18
         targetSdkVersion 21
         versionCode 1

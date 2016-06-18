@@ -10,8 +10,6 @@ import com.skyline.performancetest.jerrymouse.JerryMouseNoteDao;
 import com.skyline.performancetest.ormlite.OrmLiteDBHelper;
 import com.skyline.performancetest.ormlite.OrmLiteNoteDao;
 
-import org.junit.Test;
-
 /**
  * Created by jairus on 16/4/23.
  */
@@ -25,7 +23,6 @@ public class UpdateListTest extends AndroidTestCase {
 		JerryMouseDbInitHelper.initDb(getContext());
 	}
 
-	@Test
 	public void test() throws Exception {
 
 		OrmLiteNoteDao ormLiteNoteDao = new OrmLiteNoteDao();
