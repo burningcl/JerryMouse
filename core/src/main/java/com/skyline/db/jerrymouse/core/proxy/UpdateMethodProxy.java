@@ -9,6 +9,7 @@ import com.skyline.db.jerrymouse.core.annotation.DbField;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.util.InstanceParser;
 import com.skyline.db.jerrymouse.core.util.MethodInvokeHelper;
 import com.skyline.db.jerrymouse.core.util.StringUtils;
@@ -74,7 +75,7 @@ public class UpdateMethodProxy extends AbsMethodProxy {
 		long updateItemNum = 0;
 
 		if (args == null || args.length <= 0) {
-			Log.w(LOG_TAG, "invoke, fail, args is empty!");
+			LogUtil.w(LOG_TAG, "invoke, fail, args is empty!");
 			return genResult(updateItemNum);
 		}
 
@@ -211,7 +212,7 @@ public class UpdateMethodProxy extends AbsMethodProxy {
 		sql.append(whereClause);
 		this.sql = sql.toString();
 
-		Log.d(LOG_TAG, "getSql, sql: " + this.sql);
+		LogUtil.d(LOG_TAG, "getSql, sql: " + this.sql);
 
 		return this.sql;
 	}

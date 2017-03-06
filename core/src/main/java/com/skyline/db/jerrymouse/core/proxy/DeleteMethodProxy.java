@@ -1,14 +1,16 @@
 package com.skyline.db.jerrymouse.core.proxy;
 
+import android.annotation.TargetApi;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import android.util.Log;
+import android.os.Build;
 
 import com.skyline.db.jerrymouse.core.Dao;
 import com.skyline.db.jerrymouse.core.annotation.DbField;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.util.InstanceParser;
 import com.skyline.db.jerrymouse.core.util.MethodInvokeHelper;
 import com.skyline.db.jerrymouse.core.util.StringUtils;
@@ -72,7 +74,7 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 		long delItemNum = 0;
 
 		if (args == null || args.length <= 0) {
-			Log.w(LOG_TAG, "invoke, fail, args is empty!");
+			LogUtil.w(LOG_TAG, "invoke, fail, args is empty!");
 			return genResult(delItemNum);
 		}
 
@@ -101,6 +103,7 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 		}
 	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private long delItems(Object[] items) throws DataSourceException, IllegalAccessException, ClassParseException, InstantiationException,
 			SQLException {
 
@@ -136,6 +139,7 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 		return delItemNum;
 	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private long delWithSql(Object[] args) throws IllegalAccessException, InstantiationException, DataSourceException, SQLException {
 		SQLiteDatabase db = getWritableDatabase();
 		SQLiteStatement statement = db.compileStatement(sql);
@@ -186,7 +190,7 @@ public class DeleteMethodProxy extends AbsMethodProxy {
 		}
 
 		this.sql = sql.toString();
-		Log.d(LOG_TAG, "getSql, sql: " + this.sql);
+		LogUtil.d(LOG_TAG, "getSql, sql: " + this.sql);
 
 		return this.sql;
 	}

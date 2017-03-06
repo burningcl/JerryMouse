@@ -2,6 +2,8 @@ package com.skyline.db.jerrymouse.core.type;
 
 import android.util.Log;
 
+import com.skyline.db.jerrymouse.core.log.LogUtil;
+
 import java.lang.reflect.Type;
 
 /**
@@ -35,7 +37,7 @@ public enum DbColumnType {
 		} else if (type == String.class) {
 			return TEXT;
 		}
-		Log.w(LOG_TAG, "get, type " + type + " is not supported!");
+		LogUtil.w(LOG_TAG, "get, type " + type + " is not supported!");
 		return null;
 	}
 

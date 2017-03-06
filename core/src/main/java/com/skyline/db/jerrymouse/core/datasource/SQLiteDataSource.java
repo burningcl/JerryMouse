@@ -1,5 +1,6 @@
 package com.skyline.db.jerrymouse.core.datasource;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,9 +8,11 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.os.Build;
 import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.meta.CreateTableSql;
 import com.skyline.db.jerrymouse.core.type.DbColumnType;
 import com.skyline.db.jerrymouse.core.util.CreateTableHelper;
@@ -34,11 +37,12 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 
 	private static SQLiteDataSource INSTANCE;
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private SQLiteDataSource(Context context,
-	                         String name,
-	                         SQLiteDatabase.CursorFactory factory,
-	                         int version,
-	                         DatabaseErrorHandler errorHandler) {
+							 String name,
+							 SQLiteDatabase.CursorFactory factory,
+							 int version,
+							 DatabaseErrorHandler errorHandler) {
 		super(context, name, factory, version, errorHandler);
 	}
 
@@ -67,7 +71,7 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 	                                            List<Class<?>> metaCalzzes,
 	                                            DataSourceInitCallBack initCallBack,
 	                                            int logLevel) throws DataSourceException {
-		Log.i(LOG_TAG, "init, context: " + context + ", name: " + name + ", version: " + version);
+		LogUtil.i(LOG_TAG, "init, context: " + context + ", name: " + name + ", version: " + version);
 		if (INSTANCE != null && DataSourceHolder.DATA_SOURCE != null) {
 			throw new DataSourceException(DataSourceException.Reason.DATA_SOURCE_ALREADY_INITED);
 		}
@@ -154,7 +158,7 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		Log.i(LOG_TAG, "onCreate");
+		LogUtil.i(LOG_TAG, "onCreate");
 		if (INIT_CALL_BACK != null) {
 			INIT_CALL_BACK.beforeCreateTable();
 		}
@@ -166,7 +170,7 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.i(LOG_TAG, "onUpgrade, oldVersion: " + oldVersion + ", newVersion: " + newVersion);
+		LogUtil.i(LOG_TAG, "onUpgrade, oldVersion: " + oldVersion + ", newVersion: " + newVersion);
 		createTables(db);
 		if (INIT_CALL_BACK != null) {
 			INIT_CALL_BACK.onUpgrade(db, oldVersion, newVersion, INSTANCE);
@@ -176,11 +180,11 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 	private void createTables(SQLiteDatabase db) {
 		for (Class<?> clazz : META_CALZZES) {
 			CreateTableSql sql = CreateTableHelper.genCreateTableSql(clazz);
-			Log.i(LOG_TAG, "create table, sql: " + sql.sql);
+			LogUtil.i(LOG_TAG, "create table, sql: " + sql.sql);
 			db.execSQL(sql.sql);
 			if (sql.createIndexSql != null) {
 				for (String createIndexSql : sql.createIndexSql) {
-					Log.i(LOG_TAG, "create index, sql: " + createIndexSql);
+					LogUtil.i(LOG_TAG, "create index, sql: " + createIndexSql);
 					db.execSQL(createIndexSql);
 				}
 			}

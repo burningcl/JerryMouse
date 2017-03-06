@@ -1,6 +1,7 @@
 package com.skyline.db.jerrymouse.core.util;
 
-import android.util.Log;
+
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -21,7 +22,7 @@ public class GenericTypeHelper {
 	 */
 	public static Type[] parseGenericType(Class<?> clazz) {
 		if (clazz == null) {
-			Log.w(LOG_TAG, "clazz is null!");
+			LogUtil.w(LOG_TAG, "clazz is null!");
 			return null;
 		}
 		Type[] interfaceTypes = clazz.getGenericInterfaces();
@@ -50,7 +51,7 @@ public class GenericTypeHelper {
 			break;
 		}
 		if (pt == null) {
-			Log.w(LOG_TAG, "ParameterizedType not found!");
+			LogUtil.w(LOG_TAG, "ParameterizedType not found!");
 			return null;
 		}
 		return pt.getActualTypeArguments();

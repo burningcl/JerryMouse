@@ -1,9 +1,12 @@
 package com.skyline.db.jerrymouse.core.util;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
 import com.skyline.db.jerrymouse.core.LRUCache;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
 
 import java.lang.reflect.ParameterizedType;
@@ -73,7 +76,7 @@ public class TypeMapperHelper {
 	 */
 	public static Pair<Type, Type> getMapperGenericType(Class<? extends ITypeMapper> clazz) {
 		if (clazz == null) {
-			Log.w(LOG_TAG, "clazz is null!");
+			LogUtil.w(LOG_TAG, "clazz is null!");
 			return null;
 		}
 
@@ -102,9 +105,10 @@ public class TypeMapperHelper {
 	 * @param clazz
 	 * @return
 	 */
+	@TargetApi(Build.VERSION_CODES.ECLAIR)
 	private static Pair<Type, Type> parseMapperGenericType(Class<? extends ITypeMapper> clazz) {
 		if (clazz == null) {
-			Log.w(LOG_TAG, "clazz is null!");
+			LogUtil.w(LOG_TAG, "clazz is null!");
 			return null;
 		}
 		Type[] interfaceTypes = clazz.getGenericInterfaces();
@@ -143,12 +147,12 @@ public class TypeMapperHelper {
 			break;
 		}
 		if (pt == null) {
-			Log.w(LOG_TAG, "ParameterizedType not found!");
+			LogUtil.w(LOG_TAG, "ParameterizedType not found!");
 			return null;
 		}
 		Type[] type = pt.getActualTypeArguments();
 		if (type == null || type.length != 2) {
-			Log.w(LOG_TAG, "type length not match!");
+			LogUtil.w(LOG_TAG, "type length not match!");
 			return null;
 		}
 		return new Pair<Type, Type>(type[0], type[1]);

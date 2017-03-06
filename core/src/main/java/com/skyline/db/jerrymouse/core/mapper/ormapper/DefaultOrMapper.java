@@ -1,11 +1,14 @@
 package com.skyline.db.jerrymouse.core.mapper.ormapper;
 
+import android.annotation.TargetApi;
 import android.database.Cursor;
+import android.os.Build;
 import android.util.Log;
 import android.util.LruCache;
 import android.util.Pair;
 
 import com.skyline.db.jerrymouse.core.annotation.DbField;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
 import com.skyline.db.jerrymouse.core.util.StringUtils;
@@ -17,6 +20,7 @@ import java.lang.reflect.Type;
 /**
  * Created by jairus on 16/1/20.
  */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 public class DefaultOrMapper<T> extends AbsOrMapper<T> implements IOrMapper<T> {
 
 	/**
@@ -70,7 +74,7 @@ public class DefaultOrMapper<T> extends AbsOrMapper<T> implements IOrMapper<T> {
 
 	public static IOrMapper getInstance(Class clazz) throws IllegalAccessException, InstantiationException {
 		if (clazz == null) {
-			Log.w(LOG_TAG, "getInstance, clazz is null, pls check");
+			LogUtil.w(LOG_TAG, "getInstance, clazz is null, pls check");
 			return null;
 		}
 		DefaultOrMapper mapper = CACHE.get(clazz);
@@ -108,7 +112,7 @@ public class DefaultOrMapper<T> extends AbsOrMapper<T> implements IOrMapper<T> {
 
 			int columnIndex = getColumnIndex(c, dbField, field, i);
 
-			//Log.d(LOG_TAG, "dbField: " + dbField + ", field: " + field + ", columnIndex: " + columnIndex);
+			//LogUtil.d(LOG_TAG, "dbField: " + dbField + ", field: " + field + ", columnIndex: " + columnIndex);
 
 			Type columnType = columnTypes[i];
 			Class<? extends ITypeMapper> typeMapperClass = (Class<? extends ITypeMapper>) mapperClasses[i];

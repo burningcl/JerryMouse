@@ -1,11 +1,13 @@
 package com.skyline.db.jerrymouse.core.util;
 
-import android.util.Log;
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.util.Pair;
 
 import com.skyline.db.jerrymouse.core.annotation.DbField;
 import com.skyline.db.jerrymouse.core.annotation.DbTable;
 import com.skyline.db.jerrymouse.core.annotation.PrimaryKey;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.meta.CreateTableSql;
@@ -30,22 +32,22 @@ public class CreateTableHelper {
 
 	public static CreateTableSql genCreateTableSql(Class<?> clazz) {
 		if (clazz == null) {
-			Log.w(LOG_TAG, "createTable, fail, clazz is null!");
+			LogUtil.w(LOG_TAG, "createTable, fail, clazz is null!");
 			return null;
 		}
 		DbTable dbTable = clazz.getAnnotation(DbTable.class);
 		if (dbTable == null) {
-			Log.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", could not found DbTable annotation!");
+			LogUtil.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", could not found DbTable annotation!");
 			return null;
 		}
 		String tableName = dbTable.name();
 		if (tableName == null || tableName.length() <= 0) {
-			Log.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", could not found tableName!");
+			LogUtil.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", could not found tableName!");
 			return null;
 		}
 		Field[] fields = clazz.getDeclaredFields();
 		if (fields == null || fields.length <= 0) {
-			Log.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", fields is null!");
+			LogUtil.w(LOG_TAG, "createTable, fail, clazz: " + clazz + ", fields is null!");
 			return null;
 		}
 
@@ -170,6 +172,7 @@ public class CreateTableHelper {
 		return columnName;
 	}
 
+	@TargetApi(Build.VERSION_CODES.ECLAIR)
 	private static DbColumnType getColumnType(Field field, DbField dbField) {
 		if (field == null || dbField == null) {
 			return null;

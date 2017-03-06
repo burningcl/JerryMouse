@@ -8,6 +8,7 @@ import com.skyline.db.jerrymouse.core.annotation.Mapper;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.mapper.ormapper.DefaultOrListMapper;
 import com.skyline.db.jerrymouse.core.mapper.ormapper.DefaultOrMapper;
@@ -84,7 +85,7 @@ public class SelectMethodProxy extends AbsMethodProxy {
 				}
 			}
 		}
-		Log.d(LOG_TAG, "parseSqlAnnotation, raw: " + raw + ", mapperClass: " + mapperClass + ", returnType: " + returnType);
+		LogUtil.d(LOG_TAG, "parseSqlAnnotation, raw: " + raw + ", mapperClass: " + mapperClass + ", returnType: " + returnType);
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class SelectMethodProxy extends AbsMethodProxy {
 		long t1 = System.currentTimeMillis();
 		String[] invokeArgs = MethodInvokeHelper.getWhereArgs(args, method);
 
-		Log.i(LOG_TAG, "invoke, sql: " + sql + ", invokeArgs: " + Arrays.toString(invokeArgs));
+		LogUtil.i(LOG_TAG, "invoke, sql: " + sql + ", invokeArgs: " + Arrays.toString(invokeArgs));
 
 		Cursor cursor = getReadableDatabase().rawQuery(sql, invokeArgs);
 		long t2 = System.currentTimeMillis();
@@ -104,13 +105,13 @@ public class SelectMethodProxy extends AbsMethodProxy {
 
 		try {
 			if (returnMapper != null) {
-				Log.i(LOG_TAG, "invoke, returnMapper: " + returnMapper + ", count: " + cursor.getCount());
+				LogUtil.i(LOG_TAG, "invoke, returnMapper: " + returnMapper + ", count: " + cursor.getCount());
 				return returnMapper.map(cursor);
 			} else
 				return null;
 		} finally {
 			long t3 = System.currentTimeMillis();
-			Log.d(LOG_TAG, "invoke, query cost: " + (t2 - t1) + ", map cost: " + (t3 - t2));
+			LogUtil.d(LOG_TAG, "invoke, query cost: " + (t2 - t1) + ", map cost: " + (t3 - t2));
 			if (cursor != null && !cursor.isClosed()) {
 				try {
 					cursor.close();

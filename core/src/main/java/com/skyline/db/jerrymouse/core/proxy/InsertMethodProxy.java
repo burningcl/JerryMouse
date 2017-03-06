@@ -10,6 +10,7 @@ import com.skyline.db.jerrymouse.core.annotation.DbTable;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
 import com.skyline.db.jerrymouse.core.exception.DataSourceException;
 import com.skyline.db.jerrymouse.core.exception.MethodParseException;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.util.InstanceParser;
 import com.skyline.db.jerrymouse.core.util.StringUtils;
 
@@ -85,7 +86,7 @@ public class InsertMethodProxy extends AbsMethodProxy {
 	public Object invoke(Object[] args) throws IllegalAccessException, ClassParseException, InstantiationException, DataSourceException, NoSuchMethodException, InvocationTargetException, SQLException {
 
 		if (args == null || args.length <= 0) {
-			Log.w(LOG_TAG, "invoke, fail, args is empty!");
+			LogUtil.w(LOG_TAG, "invoke, fail, args is empty!");
 			return null;
 		}
 
@@ -151,7 +152,7 @@ public class InsertMethodProxy extends AbsMethodProxy {
 
 		this.sql = sql.toString();
 
-		Log.d(LOG_TAG, "getSql, sql: " + sql);
+		LogUtil.d(LOG_TAG, "getSql, sql: " + sql);
 
 		return this.sql;
 	}

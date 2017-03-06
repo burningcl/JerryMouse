@@ -3,6 +3,8 @@ package com.skyline.db.jerrymouse.core.mapper.ormapper;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.skyline.db.jerrymouse.core.log.LogUtil;
+
 import java.lang.reflect.Type;
 
 /**
@@ -17,7 +19,7 @@ public abstract class AbsOrMapper<T> implements IOrMapper<T> {
 
 	protected Object getFieldValue(Cursor cursor, int columnIndex, Type type) {
 		if (cursor == null || type == null || columnIndex < 0) {
-			Log.w(LOG_TAG, "getFieldValue, fail, cursor, columnName or type is null, or columnIndex is " + columnIndex);
+			LogUtil.w(LOG_TAG, "getFieldValue, fail, cursor, columnName or type is null, or columnIndex is " + columnIndex);
 			return null;
 		}
 		if (type.equals(Long.TYPE) || type.equals(Long.class)) {
@@ -35,7 +37,7 @@ public abstract class AbsOrMapper<T> implements IOrMapper<T> {
 		} else if (type.equals(String.class)) {
 			return cursor.getString(columnIndex);
 		} else {
-			Log.w(LOG_TAG, "getFieldValue, fail, type " + type + " is not a primitive data type!");
+			LogUtil.w(LOG_TAG, "getFieldValue, fail, type " + type + " is not a primitive data type!");
 			return null;
 		}
 	}

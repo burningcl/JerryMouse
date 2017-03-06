@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.LRUCache;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 
 import java.lang.reflect.Type;
 
@@ -27,7 +28,7 @@ public class PrimitiveDataMapper<T> extends AbsOrMapper<T> implements IOrMapper<
 
 	public static IOrMapper getInstance(Type type) {
 		if (type == null) {
-			Log.w(LOG_TAG, "getInstance, type is null, pls check");
+			LogUtil.w(LOG_TAG, "getInstance, type is null, pls check");
 			return null;
 		}
 		PrimitiveDataMapper mapper = CACHE.get(type);

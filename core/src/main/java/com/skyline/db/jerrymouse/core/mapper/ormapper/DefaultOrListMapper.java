@@ -1,8 +1,12 @@
 package com.skyline.db.jerrymouse.core.mapper.ormapper;
 
+import android.annotation.TargetApi;
 import android.database.Cursor;
+import android.os.Build;
 import android.util.Log;
 import android.util.LruCache;
+
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +14,7 @@ import java.util.List;
 /**
  * Created by jairus on 16/1/20.
  */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 public class DefaultOrListMapper<T> implements IOrMapper<List<T>> {
 
 	/**
@@ -27,7 +32,7 @@ public class DefaultOrListMapper<T> implements IOrMapper<List<T>> {
 
 	public static IOrMapper getInstance(Class clazz) {
 		if (clazz == null) {
-			Log.w(LOG_TAG, "getInstance, clazz is null, pls check");
+			LogUtil.w(LOG_TAG, "getInstance, clazz is null, pls check");
 			return null;
 		}
 		DefaultOrListMapper mapper = CACHE.get(clazz);

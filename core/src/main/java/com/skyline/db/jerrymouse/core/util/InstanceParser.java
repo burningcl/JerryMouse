@@ -1,10 +1,10 @@
 package com.skyline.db.jerrymouse.core.util;
 
-import android.util.Log;
 
 import com.skyline.db.jerrymouse.core.annotation.DbField;
 import com.skyline.db.jerrymouse.core.annotation.DbTable;
 import com.skyline.db.jerrymouse.core.exception.ClassParseException;
+import com.skyline.db.jerrymouse.core.log.LogUtil;
 import com.skyline.db.jerrymouse.core.mapper.MapperNull;
 import com.skyline.db.jerrymouse.core.mapper.typemapper.ITypeMapper;
 import com.skyline.db.jerrymouse.core.meta.InstanceParseResult;
@@ -53,7 +53,7 @@ public class InstanceParser {
 		Class<?> clazz = instance.getClass();
 		DbTable dbTable = clazz.getAnnotation(DbTable.class);
 		if (dbTable == null) {
-			Log.e(LOG_TAG, "parseTableInfo, fail, can't find DbTable on " + clazz.getName());
+			LogUtil.e(LOG_TAG, "parseTableInfo, fail, can't find DbTable on " + clazz.getName());
 			throw new ClassParseException(ClassParseException.Reason.DB_TABLE_ANNOTATION_REQUIRED);
 		}
 
