@@ -11,7 +11,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/example" />
-            <option value="$PROJECT_DIR$/performancetest" />
+            <option value="$PROJECT_DIR$/performanceTest" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
