@@ -19,12 +19,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.3'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'junit:junit:4.12'
     compile 'junit:junit:4.12'
-    compile 'com.google.code.gson:gson:2.3.1'
 }
 
 task makeJar(type: Copy) {
@@ -32,5 +31,30 @@ task makeJar(type: Copy) {
     from('build/intermediates/bundles/release/')
     into('build/libs/')
     include('classes.jar')
-    rename ('classes.jar', 'jerrymouse.jar')
+    rename('classes.jar', 'jerrymouse.jar')
 }
+
+final def variants = project.android.testVariants
+
+import com.skyline.db.jerrymouse.generator.ByteCodeMapperGenerator
+
+variants.all { variant ->
+    if (!variant.buildType.isDebuggable()) {
+        System.out.println("WARNING: Skipping non-debuggable build type '${variant.buildType.name}'.")
+        return;
+    }
+
+    JavaCompile javaCompile = variant.javaCompile
+    javaCompile.doLast {
+        System.out.println("WARNING: start " + javaCompile.destinationDir.toString());
+        List<String> strs = new ByteCodeMapperGenerator().gen(
+                javaCompile.destinationDir.toString(),
+                javaCompile.classpath.asPath,
+                project.android.bootClasspath.join(File.pathSeparator)
+        )
+        for (String str : strs) {
+            System.out.println("WARNING: " + str);
+        }
+    }
+}
+

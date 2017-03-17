@@ -26,3 +26,27 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-core:4.48'
     androidTestCompile project(':core')
 }
+
+final def variants = project.android.testVariants
+
+import com.skyline.db.jerrymouse.generator.ByteCodeMapperGenerator
+
+variants.all { variant ->
+    if (!variant.buildType.isDebuggable()) {
+        System.out.println("WARNING: Skipping non-debuggable build type '${variant.buildType.name}'.")
+        return;
+    }
+
+    JavaCompile javaCompile = variant.javaCompile
+    javaCompile.doLast {
+        System.out.println("WARNING: start " + javaCompile.destinationDir.toString());
+        List<String> strs = new ByteCodeMapperGenerator().gen(
+                javaCompile.destinationDir.toString(),
+                javaCompile.classpath.asPath,
+                project.android.bootClasspath.join(File.pathSeparator)
+        )
+        for (String str : strs) {
+            System.out.println("WARNING: " + str);
+        }
+    }
+}

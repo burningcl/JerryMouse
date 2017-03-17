@@ -19,17 +19,14 @@ public class InstanceParserTest extends TestCase {
 	@Test
 	public void test() throws Throwable {
 		Note note = new Note();
-		note.id = 100;
+		note.id = 100l;
 		note.title = "this is title";
 		note.text = "this is text! this is content!";
 		note.deleted = false;
 		note.createTime = System.currentTimeMillis();
 		note.modifyTime = System.currentTimeMillis() + 1;
 
-		Object[] objs=new Object[2];
-		objs[0]=note;
-
-		InstanceParseResult result = InstanceParser.parse(objs[0]);
+		InstanceParseResult result = InstanceParser.parse(note);
 		Log.d(LOG_TAG, "tableName: " + result.tableName);
 		for (InstanceParseResult.FieldParseResult r : result.fieldParseResults) {
 			Log.d(LOG_TAG, "primaryKey: " + r.primaryKey

@@ -1,1 +1,1 @@
-include ':example', ':core', ':performanceTest'
+include ':example', ':core', ':performanceTest', ':generator'

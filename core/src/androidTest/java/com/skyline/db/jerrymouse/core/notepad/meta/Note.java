@@ -21,7 +21,7 @@ public class Note {
 					autoIncrement = true
 			)
 	)
-	public long id;
+	public Long id;
 
 	@DbField(notNull = true)
 	public String title;

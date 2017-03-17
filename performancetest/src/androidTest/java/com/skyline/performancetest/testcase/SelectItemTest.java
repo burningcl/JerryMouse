@@ -30,14 +30,14 @@ public class SelectItemTest extends AndroidTestCase {
 		for (int i = 0; i < 5; i++) {
 			System.gc();
 			Thread.sleep(500);
-			long t1 = System.currentTimeMillis();
+			long t1 = System.nanoTime();
 			Note note= DaoProxy.getDao(JerryMouseNoteDao.class).selectItem(false);
-			long t2 = System.currentTimeMillis();
+			long t2 = System.nanoTime();
 			System.gc();
 			Thread.sleep(500);
-			long t3 = System.currentTimeMillis();
+			long t3 = System.nanoTime();
 			Note note2 = ormLiteNoteDao.selectNote(0);
-			long t4 = System.currentTimeMillis();
+			long t4 = System.nanoTime();
 			long jc = (t2 - t1);
 			long oc = (t4 - t3);
 			Log.i(LOG_TAG, "SelectItemTest, JerryMouse cost: " + jc + ", OrmLite cost: " + oc + ", speed up: " + ((double) oc / jc) + ", " + note+ "," +

@@ -79,6 +79,7 @@ public class SQLiteDataSource extends SQLiteOpenHelper implements IDataSource {
 		INIT_CALL_BACK = initCallBack;
 		INSTANCE = new SQLiteDataSource(context, name, factory, version, errorHandler);
 		DataSourceHolder.DATA_SOURCE = INSTANCE;
+		DataSourceHolder.CONTEXT = context;
 		DataSourceHolder.LOG_LEVEL = logLevel;
 		return INSTANCE;
 	}
